@@ -97,6 +97,9 @@
     <Content Include="concrt140.dll" />
     <Content Include="cvextern.dll" />
     <Content Include="License-LGPL.txt" />
+    <Content Include="mcqSample.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="msvcp140.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

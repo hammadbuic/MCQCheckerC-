@@ -21,9 +21,20 @@ namespace MCQ
 
         private void ImageBox1_Click(object sender, EventArgs e)
         {
-            string fileName = "C:\\Users\\hamma\\OneDrive\\Pictures\\Hammad Ahmad.jpg";
+            
+        }
+
+        private void ImageBox1_Click_1(object sender, EventArgs e)
+        {
+            string fileName = "mcqSample.jpg";
             Image<Bgr, byte> img = new Image<Bgr, byte>(fileName);
             CvInvoke.Imshow("Image", img);
+            
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
