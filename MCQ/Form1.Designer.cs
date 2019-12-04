@@ -37,6 +37,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.imageBox2 = new Emgu.CV.UI.ImageBox();
             this.button4 = new System.Windows.Forms.Button();
+            this.contourBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).BeginInit();
             this.SuspendLayout();
@@ -123,12 +124,23 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.Button4_Click);
             // 
+            // contourBtn
+            // 
+            this.contourBtn.Location = new System.Drawing.Point(461, 38);
+            this.contourBtn.Name = "contourBtn";
+            this.contourBtn.Size = new System.Drawing.Size(75, 23);
+            this.contourBtn.TabIndex = 7;
+            this.contourBtn.Text = "Find Contour";
+            this.contourBtn.UseVisualStyleBackColor = true;
+            this.contourBtn.Click += new System.EventHandler(this.ContourBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(28)))), ((int)(((byte)(38)))));
             this.ClientSize = new System.Drawing.Size(888, 469);
+            this.Controls.Add(this.contourBtn);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.imageBox2);
             this.Controls.Add(this.button3);
@@ -157,6 +169,7 @@
         private System.Windows.Forms.Button button3;
         private Emgu.CV.UI.ImageBox imageBox2;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button contourBtn;
     }
 }
 

@@ -17,6 +17,7 @@ namespace MCQ
         string fileName = "mcqSample.jpg";
         Image<Bgr, Byte> img;
         Image<Gray, Byte> imgGray;
+        UMat cannyImage = new UMat(); //initializing with matrix
         public Form1()
         {
             InitializeComponent();
@@ -34,29 +35,52 @@ namespace MCQ
         private void Button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            
+            //Browsing Image from Location
             if(ofd.ShowDialog()==DialogResult.OK)
             {
                 fileName = ofd.FileName;
                 img = new Image<Bgr, Byte>(fileName);
                 ofd.Filter = " Image Files(*.tif;*.dcm;*.jpg;*.jpeg;*.bmp)|*.tif;*.dcm;*.jpg;*.jpeg;*.bmp";
-                imageBox1.Image = img;
+                imageBox1.Image = img;          //Displaying image in image Box
             }
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-           imgGray = new Image<Gray, Byte>(fileName);
-           imageBox2.Image = imgGray;
-           imgGray = imgGray.ThresholdBinary(new Gray(120), new Gray(255));
-           imageBox2.Image = imgGray;
+            //imgGray = new Image<Gray, Byte>(fileName);   //Converting Image to Grayscale
+            imgGray = img.Convert<Gray, Byte>();
+            imageBox2.Image = imgGray;
+
+            
         }
 
         private void Button4_Click(object sender, EventArgs e)
         {
-            CvInvoke.AdaptiveThreshold(imgGray, imgGray,255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 75, 10);
-            CvInvoke.BitwiseNot(imgGray, imgGray);
-            imageBox2.Image = imgGray;
+
+            //Converted to blurred
+            CvInvoke.GaussianBlur(imgGray, imgGray, new Size(5, 5), 0);
+            imageBox1.Image = imgGray;
+            // using adaptive threshhold
+             CvInvoke.AdaptiveThreshold(imgGray, imgGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 75, 10);
+             CvInvoke.BitwiseNot(imgGray, imgGray);
+            //imageBox2.Image = imgGray; //Addaptive threshhold
+            //Applying canny
+            //initialize canny matrix
+            
+            CvInvoke.Canny(imgGray, cannyImage, 75, 200);
+            imageBox2.Image = cannyImage;
+        }
+
+        private void ContourBtn_Click(object sender, EventArgs e)
+        {
+            Image<Gray, byte> imgContour = img.Convert<Gray, byte>().ThresholdBinary(new Gray(120), new Gray(255));
+            imageBox2.Image = imgContour;
+            cannyImage.ConvertTo(imgContour, Emgu.CV.CvEnum.DepthType.Default,-1,0);
+            //imageBox1.Image = cannyImage;
+            Emgu.CV.Util.VectorOfVectorOfPoint Contour = new Emgu.CV.Util.VectorOfVectorOfPoint();
+            CvInvoke.FindContours(cannyImage, Contour, null, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.DrawContours(img, Contour, -1, new MCvScalar(255, 0, 0));
+            imageBox1.Image = img;
         }
     }
 }
