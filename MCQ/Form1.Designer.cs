@@ -38,8 +38,16 @@
             this.imageBox2 = new Emgu.CV.UI.ImageBox();
             this.button4 = new System.Windows.Forms.Button();
             this.contourBtn = new System.Windows.Forms.Button();
+            this.imageBox3 = new Emgu.CV.UI.ImageBox();
+            this.imageBox4 = new Emgu.CV.UI.ImageBox();
+            this.imageBox5 = new Emgu.CV.UI.ImageBox();
+            this.imageBox6 = new Emgu.CV.UI.ImageBox();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox6)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -66,9 +74,9 @@
             // imageBox1
             // 
             this.imageBox1.BackColor = System.Drawing.Color.White;
-            this.imageBox1.Location = new System.Drawing.Point(536, 119);
+            this.imageBox1.Location = new System.Drawing.Point(12, 139);
             this.imageBox1.Name = "imageBox1";
-            this.imageBox1.Size = new System.Drawing.Size(307, 271);
+            this.imageBox1.Size = new System.Drawing.Size(180, 158);
             this.imageBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imageBox1.TabIndex = 2;
             this.imageBox1.TabStop = false;
@@ -107,9 +115,9 @@
             // imageBox2
             // 
             this.imageBox2.BackColor = System.Drawing.Color.White;
-            this.imageBox2.Location = new System.Drawing.Point(36, 141);
+            this.imageBox2.Location = new System.Drawing.Point(198, 139);
             this.imageBox2.Name = "imageBox2";
-            this.imageBox2.Size = new System.Drawing.Size(256, 249);
+            this.imageBox2.Size = new System.Drawing.Size(162, 158);
             this.imageBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imageBox2.TabIndex = 2;
             this.imageBox2.TabStop = false;
@@ -134,12 +142,52 @@
             this.contourBtn.UseVisualStyleBackColor = true;
             this.contourBtn.Click += new System.EventHandler(this.ContourBtn_Click);
             // 
+            // imageBox3
+            // 
+            this.imageBox3.Location = new System.Drawing.Point(366, 139);
+            this.imageBox3.Name = "imageBox3";
+            this.imageBox3.Size = new System.Drawing.Size(161, 158);
+            this.imageBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.imageBox3.TabIndex = 2;
+            this.imageBox3.TabStop = false;
+            // 
+            // imageBox4
+            // 
+            this.imageBox4.Location = new System.Drawing.Point(535, 139);
+            this.imageBox4.Name = "imageBox4";
+            this.imageBox4.Size = new System.Drawing.Size(161, 158);
+            this.imageBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.imageBox4.TabIndex = 2;
+            this.imageBox4.TabStop = false;
+            // 
+            // imageBox5
+            // 
+            this.imageBox5.Location = new System.Drawing.Point(703, 139);
+            this.imageBox5.Name = "imageBox5";
+            this.imageBox5.Size = new System.Drawing.Size(173, 158);
+            this.imageBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.imageBox5.TabIndex = 2;
+            this.imageBox5.TabStop = false;
+            // 
+            // imageBox6
+            // 
+            this.imageBox6.Location = new System.Drawing.Point(13, 304);
+            this.imageBox6.Name = "imageBox6";
+            this.imageBox6.Size = new System.Drawing.Size(179, 153);
+            this.imageBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.imageBox6.TabIndex = 2;
+            this.imageBox6.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(28)))), ((int)(((byte)(38)))));
             this.ClientSize = new System.Drawing.Size(888, 469);
+            this.Controls.Add(this.imageBox6);
+            this.Controls.Add(this.imageBox5);
+            this.Controls.Add(this.imageBox4);
+            this.Controls.Add(this.imageBox3);
             this.Controls.Add(this.contourBtn);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.imageBox2);
@@ -154,6 +202,10 @@
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageBox6)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -170,6 +222,10 @@
         private Emgu.CV.UI.ImageBox imageBox2;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button contourBtn;
+        private Emgu.CV.UI.ImageBox imageBox3;
+        private Emgu.CV.UI.ImageBox imageBox4;
+        private Emgu.CV.UI.ImageBox imageBox5;
+        private Emgu.CV.UI.ImageBox imageBox6;
     }
 }
 

@@ -50,25 +50,57 @@ namespace MCQ
             //imgGray = new Image<Gray, Byte>(fileName);   //Converting Image to Grayscale
             imgGray = img.Convert<Gray, Byte>();
             imageBox2.Image = imgGray;
-
+            //Converted to blurred
+            CvInvoke.GaussianBlur(imgGray, imgGray, new Size(5, 5), 0);
             
+            // using adaptive threshhold
+            CvInvoke.AdaptiveThreshold(imgGray, imgGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 75, 10);
+            CvInvoke.BitwiseNot(imgGray, imgGray);
+            imageBox3.Image = imgGray;
+            //Applying canny
+            //initialize canny matrix
+            CvInvoke.Canny(imgGray, cannyImage, 75, 200);
+            imageBox4.Image = cannyImage;
+            cannyImage.ConvertTo(imgGray, Emgu.CV.CvEnum.DepthType.Default, -1, 0);
+            Emgu.CV.Util.VectorOfVectorOfPoint vector = new Emgu.CV.Util.VectorOfVectorOfPoint();
+            CvInvoke.FindContours(cannyImage, vector, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            //MCvScalar() is i think used for drawing with some sort of color (last argument is defining thickness)
+           // CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
+            imageBox5.Image = img;
+            //Point defines the x-y coordinates in 2d-plane
+            //using dictionary learn about 
+          
+            Dictionary<int, double> dict = new Dictionary<int, double>();
+            if (vector.Size > 0)
+            {
+                for (int i = 0; i < vector.Size; i++)
+                {
+                    double area = CvInvoke.ContourArea(vector[i]);
+                    dict.Add(i,area);
+                }
+                var item = dict.OrderByDescending(v => v.Value).Take(1);
+                
+                
+                
+                foreach(var it in item)
+                {
+                    int key = Convert.ToInt32(it.Key.ToString());
+                    Rectangle rect = CvInvoke.BoundingRectangle(vector[key]);
+                    CvInvoke.Rectangle(img, rect, new MCvScalar(255, 0, 0), 3);
+                    //var peri = CvInvoke.ArcLength(arr, true);
+                }
+            }
+            imageBox6.Image = img;
+
         }
 
         private void Button4_Click(object sender, EventArgs e)
         {
 
-            //Converted to blurred
-            CvInvoke.GaussianBlur(imgGray, imgGray, new Size(5, 5), 0);
-            imageBox1.Image = imgGray;
-            // using adaptive threshhold
-             CvInvoke.AdaptiveThreshold(imgGray, imgGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 75, 10);
-             CvInvoke.BitwiseNot(imgGray, imgGray);
-            //imageBox2.Image = imgGray; //Addaptive threshhold
-            //Applying canny
-            //initialize canny matrix
             
-            CvInvoke.Canny(imgGray, cannyImage, 75, 200);
-            imageBox2.Image = cannyImage;
+            
+            //imageBox2.Image = imgGray; //Addaptive threshhold
+            
         }
 
         private void ContourBtn_Click(object sender, EventArgs e)
@@ -79,7 +111,6 @@ namespace MCQ
             //imageBox1.Image = cannyImage;
             Emgu.CV.Util.VectorOfVectorOfPoint Contour = new Emgu.CV.Util.VectorOfVectorOfPoint();
             CvInvoke.FindContours(cannyImage, Contour, null, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
-            CvInvoke.DrawContours(img, Contour, -1, new MCvScalar(255, 0, 0));
             imageBox1.Image = img;
         }
     }
