@@ -17,6 +17,7 @@ namespace MCQ
         string fileName = "mcqSample.jpg";
         Image<Bgr, Byte> img;
         Image<Gray, Byte> imgGray;
+        Image<Bgr, byte> imgDst;
         UMat cannyImage = new UMat(); //initializing with matrix
         public Form1()
         {
@@ -65,33 +66,44 @@ namespace MCQ
             Emgu.CV.Util.VectorOfVectorOfPoint vector = new Emgu.CV.Util.VectorOfVectorOfPoint();
             CvInvoke.FindContours(cannyImage, vector, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //MCvScalar() is i think used for drawing with some sort of color (last argument is defining thickness)
-           // CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
+            CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
+            //change image variable so that user can see change in images
             imageBox5.Image = img;
             //Point defines the x-y coordinates in 2d-plane
             //using dictionary learn about 
-          
+            Emgu.CV.Util.VectorOfPoint approx = new Emgu.CV.Util.VectorOfPoint();
             Dictionary<int, double> dict = new Dictionary<int, double>();
             if (vector.Size > 0)
             {
                 for (int i = 0; i < vector.Size; i++)
                 {
+                    //calculating area of contours
                     double area = CvInvoke.ContourArea(vector[i]);
-                    dict.Add(i,area);
+                    dict.Add(i,area); //adding areas in dictionary i don't know why i did that
                 }
-                var item = dict.OrderByDescending(v => v.Value).Take(1);
+                var item = dict.OrderByDescending(v => v.Value);  //.Take(1);
                 
                 
-                
+                //Preparing for perspective transformation
                 foreach(var it in item)
                 {
                     int key = Convert.ToInt32(it.Key.ToString());
-                    Rectangle rect = CvInvoke.BoundingRectangle(vector[key]);
-                    CvInvoke.Rectangle(img, rect, new MCvScalar(255, 0, 0), 3);
-                    //var peri = CvInvoke.ArcLength(arr, true);
+                    //generating arc length wrapping the doc
+                    double peri = CvInvoke.ArcLength(vector[key], true);
+                    MessageBox.Show(Convert.ToString(peri));
+                    CvInvoke.ApproxPolyDP(vector[key],approx, 0.02 * peri, true);
+                    if(approx.Size==4)
+                    {
+                        Rectangle rect = CvInvoke.BoundingRectangle(vector[key]);
+                        CvInvoke.Rectangle(img, rect, new MCvScalar(255, 0, 0), 3);
+                        break;
+                    }
                 }
             }
             imageBox6.Image = img;
-
+            
+            CvInvoke.PerspectiveTransform(img, imgDst, approx);
+            imageBox7.Image = img;
         }
 
         private void Button4_Click(object sender, EventArgs e)
