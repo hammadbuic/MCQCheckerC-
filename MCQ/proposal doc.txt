@@ -1,0 +1,15 @@
+Project idea
+Developing a windows form application which will match the Multiple-Choice Questions from the bubble sheet to the provided answer key and 
+tell how much of the answers are correct and how much of them are false.
+Overview
+The application will take an image of scanned document (bubble sheet) as input then it will process it by the technique of OMR (Optical Mark Recognition)
+using EMGU CV (is a cross platform .Net wrapper to the OPEN CV image processing library. Allowing OPEN CV functions to be called from .NET compatible languages 
+such as C#, VB, VC++. Whereas, OpenCV (Open Source Computer Vision Library) is an open source computer vision and machine learning software library. 
+OpenCV was built to provide a common infrastructure for computer vision applications and to accelerate the use of machine perception in the commercial products) 
+and after that it will match the answers on the bubble sheet with the answer key and tells how much of the answers are correct on that bubble sheet and how much 
+of them are false. I am planning to extend this idea by uniquely identifying each bubble sheet cross ponding to that student and save the result of specific 
+courseprogram into the database.
+Tools Used
+•	.NET framework in Microsoft Visual studio
+•	EMGU CV libraries
+•	OMR (Optical Mark Recognition)

@@ -71,7 +71,9 @@ namespace MCQ
             imageBox5.Image = img;
             //Point defines the x-y coordinates in 2d-plane
             //using dictionary learn about 
-            Emgu.CV.Util.VectorOfPoint approx = new Emgu.CV.Util.VectorOfPoint();
+            Emgu.CV.Util.VectorOfPointF approx = new Emgu.CV.Util.VectorOfPointF();
+           // UMat approx = new UMat();
+            
             Dictionary<int, double> dict = new Dictionary<int, double>();
             if (vector.Size > 0)
             {
@@ -92,18 +94,32 @@ namespace MCQ
                     double peri = CvInvoke.ArcLength(vector[key], true);
                     MessageBox.Show(Convert.ToString(peri));
                     CvInvoke.ApproxPolyDP(vector[key],approx, 0.02 * peri, true);
-                    if(approx.Size==4)
+                    if(approx.Size==0)
                     {
-                        Rectangle rect = CvInvoke.BoundingRectangle(vector[key]);
-                        CvInvoke.Rectangle(img, rect, new MCvScalar(255, 0, 0), 3);
+                        
+                    }
+                    else if(approx.Size==4)
+                    {
+                        //Rectangle rect = CvInvoke.BoundingRectangle(vector[key]);
+                        //CvInvoke.Rectangle(img, rect, new MCvScalar(255, 0, 0), 3);
+                        CvInvoke.DrawContours(img, vector, key, new MCvScalar(255, 0, 0), 5);
+                        MessageBox.Show("Vector\n" + vector.ToArrayOfArray() + "\napprox\n" + approx.ToArray());
                         break;
                     }
                 }
             }
             imageBox6.Image = img;
+            ///var a=vector.ToArrayOfArray();
+            ///var b = approx.ToString();
+            //MessageBox.Show(b);
             
-            CvInvoke.PerspectiveTransform(img, imgDst, approx);
-            imageBox7.Image = img;
+            Mat approxMat = new Mat();
+            //MessageBox.Show("is umat "+approx.IsUmat());
+            //CvInvoke.PerspectiveTransform(img, imgDst, approx);
+            approxMat=CvInvoke.GetPerspectiveTransform(approx,vector);
+            //CvInvoke.GetPerspectiveTransform(approx, vector);
+            //CvInvoke.PerspectiveTransform(img, imgDst, approxMat);
+            imageBox7.Image = imgDst;
         }
 
         private void Button4_Click(object sender, EventArgs e)

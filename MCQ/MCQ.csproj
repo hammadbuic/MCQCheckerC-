@@ -106,6 +106,7 @@
     <Content Include="opencv_videoio_ffmpeg411_64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="proposal doc.txt" />
     <Content Include="vcruntime140.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
