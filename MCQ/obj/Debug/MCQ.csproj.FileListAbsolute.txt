@@ -42,3 +42,13 @@ E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.csproj.CopyComplete
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.exe
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.pdb
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\mcqSample.jpg
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\NumSharp.Core.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Buffers.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Memory.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Numerics.Vectors.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\NumSharp.Core.pdb
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Buffers.xml
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Memory.xml
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Numerics.Vectors.xml
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
