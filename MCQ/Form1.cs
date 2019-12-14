@@ -21,6 +21,8 @@ namespace MCQ
         Image<Gray, Byte> imgGray;
         Image<Bgr, byte> imgDst;
         Image<Bgr, byte> copyImage;
+
+        Point[][] points1;
         UMat cannyImage = new UMat(); //initializing with matrix
         public Form1()
         {
@@ -78,11 +80,12 @@ namespace MCQ
             imageBox4.Image = cannyImage;
             cannyImage.ConvertTo(imgGray, Emgu.CV.CvEnum.DepthType.Default, -1, 0);
             Emgu.CV.Util.VectorOfVectorOfPoint vector = new Emgu.CV.Util.VectorOfVectorOfPoint();
-            
+            //Point[,] points = new Point[4,2];
             CvInvoke.FindContours(cannyImage, vector, null, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //MCvScalar() is i think used for drawing with some sort of color (last argument is defining thickness)
             CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
             //change image variable so that user can see change in images
+            points1=vector.ToArrayOfArray();
             imageBox5.Image = img;
         }
 
@@ -92,9 +95,9 @@ namespace MCQ
             CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.List, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //Point defines the x-y coordinates in 2d-plane
             //using dictionary learn about 
-            Emgu.CV.Util.VectorOfPointF approx = new Emgu.CV.Util.VectorOfPointF();
-            // UMat approx = new UMat();
+            Emgu.CV.Util.VectorOfPoint approx = new Emgu.CV.Util.VectorOfPoint();
             Dictionary<int, double> dict = new Dictionary<int, double>();
+            
             if (vecOut.Size > 0)
             {
                 for (int i = 0; i < vecOut.Size; i++)
@@ -105,14 +108,13 @@ namespace MCQ
                 }
                 var item = dict.OrderByDescending(v => v.Value);  //.Take(1);
 
-
+                
                 //Preparing for perspective transformation
                 foreach (var it in item)
                 {
                     int key = Convert.ToInt32(it.Key.ToString());
                     //generating arc length wrapping the doc
                     double peri = CvInvoke.ArcLength(vecOut[key], true);
-                    //MessageBox.Show(Convert.ToString(peri));
                     CvInvoke.ApproxPolyDP(vecOut[key], approx, 0.02 * peri, true);
                     if (approx.Size == 0)
                     {
@@ -122,8 +124,9 @@ namespace MCQ
                     {
                         try
                         {
+                            MessageBox.Show("Size of approx: " + approx.Size);
                             CvInvoke.DrawContours(copyImage, vecOut, key, new MCvScalar(255, 0, 0), 5);
-
+                           
                         }
                         catch (Exception ex)
                         {
@@ -136,35 +139,23 @@ namespace MCQ
                     }
                 }
             }
-            imageBox6.Image = copyImage;
-            //Converting to an np type array
-            //ArrayConverter convert = new ArrayConverter();
-           // NDArray nD;
-           // Array.ConvertAll<Emgu.CV.Util.VectorOfPointF, NDArray>(approx, element => element.ToArray());
-            //var ii = np.array(approx.ToArray());
+            var src = approx.ToArray();
             
-            //order(ii);
-            ///var a=vector.ToArrayOfArray();
-            ///var b = approx.ToString();
-            //MessageBox.Show(b);
+            
+            //src.ResolveShape();
+            imageBox6.Image = copyImage;
+            
             try
             {
-                Mat approxMat = new Mat();
+                var nd = np.array(src, true).reshape(4, 2);
 
-                approxMat = CvInvoke.GetPerspectiveTransform(approx.ToArray(),approx.ToArray());
-                MessageBox.Show(approxMat.ToString());
-                
-                CvInvoke.WarpPerspective(img, img, approxMat,new System.Drawing.Size(150,150), Emgu.CV.CvEnum.Inter.Linear, Emgu.CV.CvEnum.Warp.Default, Emgu.CV.CvEnum.BorderType.Default, default);
             }
             catch (Exception er)
             {
-                MessageBox.Show(er.Message);
+                MessageBox.Show("Eroor");
             }
-            //MessageBox.Show("is umat "+approx.IsUmat());
-            //CvInvoke.PerspectiveTransform(img, imgDst, approx);
-            //CvInvoke.GetPerspectiveTransform(approx, vector);
-            //CvInvoke.PerspectiveTransform(img, imgDst, approxMat);
-            imageBox7.Image = img;
+         
+            
 
         }
 
