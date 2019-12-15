@@ -183,7 +183,7 @@ namespace MCQ
                 //var nd = np.array(point, true).reshape(4, 2);
                 
                 NDArray arr = np.asarray(10);
-                
+                arr = np.asarray(50);
                 MessageBox.Show("We have : " + arr.ToString());
             }
             catch (Exception er)
