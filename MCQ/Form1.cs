@@ -21,6 +21,7 @@ namespace MCQ
         Image<Gray, Byte> imgGray;
         Image<Bgr, byte> imgDst;
         Image<Bgr, byte> copyImage;
+        Image<Bgr, byte> cpyImgPerspect;
 
         Point[][] points1;
         UMat cannyImage = new UMat(); //initializing with matrix
@@ -30,16 +31,11 @@ namespace MCQ
             img = new Image<Bgr, Byte>(fileName);
             imageBox1.Image = img;
             copyImage = img;
+            cpyImgPerspect = img;
         }
-        NDArray order(NDArray points)
+        void order(Point[] p)
         {
-            var rect1 = np.zeros((4, 2),dtype: np.float32);
-
-            var s = points.sum(1);
-            rect1[0] = points[np.argmin(s)];
-            rect1[2] = points[np.argmax(s)];
-            //var difference
-            return rect1;
+            
         }
       
 
@@ -59,9 +55,20 @@ namespace MCQ
                 ofd.Filter = " Image Files(*.tif;*.dcm;*.jpg;*.jpeg;*.bmp)|*.tif;*.dcm;*.jpg;*.jpeg;*.bmp";
                 imageBox1.Image = img;          //Displaying image in image Box
                 copyImage = img; //Copy of the orignal immage
+                cpyImgPerspect = img;
             }
         }
-
+        void orderThePoints(PointF[] p)
+        {
+            NDArray arr;
+            arr = np.asarray(p);
+            String size = arr.ToString();
+            MessageBox.Show("Array Elements: " + size);
+            
+            //float[,] nullPoints = new float[4, 2];
+            //var rect = np.zeros((4, 2), dtype: np.float32);
+            
+        }
         private void Button3_Click(object sender, EventArgs e)
         {
             //imgGray = new Image<Gray, Byte>(fileName);   //Converting Image to Grayscale
@@ -91,13 +98,16 @@ namespace MCQ
 
         private void Button4_Click(object sender, EventArgs e)
         {
+            
+            
             Emgu.CV.Util.VectorOfVectorOfPoint vecOut = new Emgu.CV.Util.VectorOfVectorOfPoint();
             CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.List, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //Point defines the x-y coordinates in 2d-plane
             //using dictionary learn about 
-            Emgu.CV.Util.VectorOfPoint approx = new Emgu.CV.Util.VectorOfPoint();
+            Emgu.CV.Util.VectorOfPointF approx = new Emgu.CV.Util.VectorOfPointF();
             Dictionary<int, double> dict = new Dictionary<int, double>();
-            
+            PointF[] point = new PointF[4];
+            NDArray nD;
             if (vecOut.Size > 0)
             {
                 for (int i = 0; i < vecOut.Size; i++)
@@ -105,6 +115,7 @@ namespace MCQ
                     //calculating area of contours
                     double area = CvInvoke.ContourArea(vecOut[i]);
                     dict.Add(i, area); //adding areas in dictionary i don't know why i did that
+                    
                 }
                 var item = dict.OrderByDescending(v => v.Value);  //.Take(1);
 
@@ -112,9 +123,13 @@ namespace MCQ
                 //Preparing for perspective transformation
                 foreach (var it in item)
                 {
+                    
                     int key = Convert.ToInt32(it.Key.ToString());
+
                     //generating arc length wrapping the doc
                     double peri = CvInvoke.ArcLength(vecOut[key], true);
+                    //MessageBox.Show("Key " + vecOut[key]);
+                   // p=vecOut[key].ToArray();
                     CvInvoke.ApproxPolyDP(vecOut[key], approx, 0.02 * peri, true);
                     if (approx.Size == 0)
                     {
@@ -124,9 +139,15 @@ namespace MCQ
                     {
                         try
                         {
-                            MessageBox.Show("Size of approx: " + approx.Size);
+                            //MessageBox.Show("Size of approx: " + approx.Size);
                             CvInvoke.DrawContours(copyImage, vecOut, key, new MCvScalar(255, 0, 0), 5);
-                           
+                            for(int i=0;i<approx.Size;i++)
+                            {
+                                
+                                point[i] = approx[i];
+                              //  MessageBox.Show("Contour: " + point[i]);
+                               
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -139,20 +160,35 @@ namespace MCQ
                     }
                 }
             }
-            var src = approx.ToArray();
-            
+            //var src = approx.ToArray();
+            //Apply four point func for transform
             
             //src.ResolveShape();
+
             imageBox6.Image = copyImage;
             
             try
             {
-                var nd = np.array(src, true).reshape(4, 2);
-
+                //Emgu.CV.Util.VectorOfPointF destCorners,srcCorners = new Emgu.CV.Util.VectorOfPointF();
+                //destCorners = approx;
+                //srcCorners = approx;
+                //Mat srcMat = CvInvoke.Imread(fileName);
+                //Mat destMat = new Mat();
+                //Mat warpMat = CvInvoke.GetPerspectiveTransform(srcCorners, destCorners);
+                //CvInvoke.WarpPerspective(srcMat, destMat, warpMat, new System.Drawing.Size(4800, 6000), Emgu.CV.CvEnum.Inter.Linear, Emgu.CV.CvEnum.Warp.Default, Emgu.CV.CvEnum.BorderType.Transparent);
+                //imageBox7.Image = destMat.ToImage<Bgr, byte>();
+                //orderThePoints(point);
+                //cpyImgPerspect.Convert<Point, byte>();
+                //Mat matrix=CvInvoke.GetPerspectiveTransform(approx, cvArray);
+                //var nd = np.array(point, true).reshape(4, 2);
+                
+                NDArray arr = np.asarray(10);
+                
+                MessageBox.Show("We have : " + arr.ToString());
             }
             catch (Exception er)
             {
-                MessageBox.Show("Eroor");
+                MessageBox.Show(er.StackTrace);
             }
          
             
