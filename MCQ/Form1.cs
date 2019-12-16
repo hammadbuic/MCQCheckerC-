@@ -181,10 +181,33 @@ namespace MCQ
                 //cpyImgPerspect.Convert<Point, byte>();
                 //Mat matrix=CvInvoke.GetPerspectiveTransform(approx, cvArray);
                 //var nd = np.array(point, true).reshape(4, 2);
+
+                //NDArray arr = np.asarray(10);
+                //arr = np.asarray(50);
+
+                //MessageBox.Show("We have : " + arr.ToString());
+
+                PointF[] destCorners = new PointF[4];
+                destCorners[0] = new PointF(0, 0);
+                destCorners[1] = new PointF(0, 350);
+                destCorners[2] = new PointF(350, 350);
+                destCorners[3] = new PointF(350, 0);
+                Mat myWarpMat = CvInvoke.GetPerspectiveTransform(point, destCorners);
+
+                // cpyImgPerspect = cpyImgPerspect.WarpPerspective<byte>(myWarpMat, Emgu.CV.CvEnum.Inter.Linear, Emgu.CV.CvEnum.Warp.FillOutliers, Emgu.CV.CvEnum.BorderType.Transparent, new Bgr());
+                ////cpyImgPerspect= cpyImgPerspect.WarpAffine
+                // CvInvoke.Imshow("img", cpyImgPerspect);
+
+                //imageBox7.Image = cpyImgPerspect;
+
+                //Rectangle rectangle = CvInvoke.BoundingRectangle(approx);
+                //cpyImgPerspect.ROI = rectangle;
+                //var abc = cpyImgPerspect.Copy();
+                //cpyImgPerspect.ROI = Rectangle.Empty;
+                //imageBox7.Image = abc;
                 
-                NDArray arr = np.asarray(10);
-                arr = np.asarray(50);
-                MessageBox.Show("We have : " + arr.ToString());
+                CvInvoke.PerspectiveTransform(cpyImgPerspect, cpyImgPerspect, myWarpMat);
+                imageBox7.Image = cpyImgPerspect;
             }
             catch (Exception er)
             {
