@@ -13,6 +13,8 @@ using Emgu.Util;
 using Emgu.CV.Structure;
 using NumSharp.Utilities;
 using NumSharp;
+using MathNet;
+using MathNet.Numerics.LinearAlgebra;
 namespace MCQ
 {
     public partial class Form1 : Form
@@ -25,7 +27,7 @@ namespace MCQ
         Image<Bgr, byte> cpyImgPerspect;
         
 
-        Point[][] points1;
+        
         UMat cannyImage = new UMat(); //initializing with matrix
         public Form1()
         {
@@ -35,10 +37,15 @@ namespace MCQ
             copyImage = img;
             cpyImgPerspect = img;
         }
-        void order(PointF[] p)
+        void order(Emgu.CV.Util.VectorOfPointF p)
         {
-            var rect = np.zeros((4, 2), dtype: np.float32);
-           // var s=np.sum()
+            Emgu.CV.Util.VectorOfRect rect =new Emgu.CV.Util.VectorOfRect();
+            //var rect=np.zeros((4, 2), dtype: np.float32);
+            //var rectMat = Mat.Zeros(4, 2, Emgu.CV.CvEnum.DepthType.Cv32F, 0);
+            List<PointF> rectList = new List<PointF>();
+            PointF[] point = p.ToArray();
+            var s = CvInvoke.Sum(p);//understand nd array axis first
+            point[0]=p[Math.Min()]
         }
       
 
@@ -61,15 +68,10 @@ namespace MCQ
                 cpyImgPerspect = img;
             }
         }
-        void orderThePoints(PointF[] p)
+        void orderThePoints(PointF[,] p)
         {
-            NDArray arr;
-            arr = np.asarray(p);
-            String size = arr.ToString();
-            MessageBox.Show("Array Elements: " + size);
             
-            //float[,] nullPoints = new float[4, 2];
-            //var rect = np.zeros((4, 2), dtype: np.float32);
+            
             
         }
         private void Button3_Click(object sender, EventArgs e)
@@ -91,17 +93,17 @@ namespace MCQ
             cannyImage.ConvertTo(imgGray, Emgu.CV.CvEnum.DepthType.Default, -1, 0);
             Emgu.CV.Util.VectorOfVectorOfPoint vector = new Emgu.CV.Util.VectorOfVectorOfPoint();
             //Point[,] points = new Point[4,2];
-            CvInvoke.FindContours(cannyImage, vector, null, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(cannyImage, vector, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //MCvScalar() is i think used for drawing with some sort of color (last argument is defining thickness)
-           // CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
+            CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
             //change image variable so that user can see change in images
-            points1=vector.ToArrayOfArray();
+            ///points1=vector.ToArrayOfArray();
             imageBox5.Image = img;
         }
 
         private void Button4_Click(object sender, EventArgs e)
         {
-
+            //float[,] pointArray;
             Emgu.CV.Util.VectorOfPointF approx = new Emgu.CV.Util.VectorOfPointF();
             Emgu.CV.Util.VectorOfVectorOfPoint vecOut = new Emgu.CV.Util.VectorOfVectorOfPoint();
             CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
@@ -111,8 +113,8 @@ namespace MCQ
             Dictionary<int, double> dict = new Dictionary<int, double>();
             PointF[] point = new PointF[4];
             
-            float[,] pointArray;
-            NDArray nD;
+            
+            
             
             if (vecOut.Size > 0)
             {
@@ -137,6 +139,7 @@ namespace MCQ
                     //MessageBox.Show("Key " + vecOut[key]);
                    // p=vecOut[key].ToArray();
                     CvInvoke.ApproxPolyDP(vecOut[key], approx, 0.02 * peri, true);
+
                     if (approx.Size == 0)
                     {
 
@@ -148,18 +151,11 @@ namespace MCQ
                             //MessageBox.Show("Size of approx: " + approx.Size);
                             
                             CvInvoke.DrawContours(copyImage, vecOut, key, new MCvScalar(255, 0, 0), 5);
-                            //for (int i = 0; i < approx.Size; i++)
-                            //{
-                            //    for(int j=0;j<2;j++)
-                            //    {
-                            //        pointArray[i,j]
-                            //    }
-
-
-                            //}
+                            for (int i = 0; i < approx.Size; i++)
+                            {
+                                point[i]=approx[i];
+                            }
                             
-                            pointArray = new float[4, 2] { { approx[0].X, approx[0].Y }, { approx[1].X, approx[1].Y }, { approx[2].X, approx[2].Y }, { approx[3].X, approx[3].Y } };
-                            MessageBox.Show("Contour: " + pointArray[0, 0] + pointArray[0, 1]);
                         }
                         catch (Exception ex)
                         {
@@ -222,11 +218,13 @@ namespace MCQ
                 //CvInvoke.PerspectiveTransform(cpyImgPerspect, cpyImgPerspect, myWarpMat);
                 //imageBox7.Image = cpyImgPerspect;
                 //NDArray arr = np.array<PointF>(point, true);
-                
-               // NDArray arr = np.array(pointArray, dtype: np.float32, 1, true, 'C');
+
+                // NDArray arr = np.array(pointArray, dtype: np.float32, 1, true, 'C');
                 // MessageBox.Show("Data: " + arr.ToString());
                 //add items to nd array
-
+                var s=CvInvoke.Sum(approx);
+                
+                order(point);
             }
             catch (Exception er)
             {
