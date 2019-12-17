@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Emgu;
 using Emgu.CV;
+using Emgu.Util;
 using Emgu.CV.Structure;
 using NumSharp.Utilities;
 using NumSharp;
@@ -22,6 +23,7 @@ namespace MCQ
         Image<Bgr, byte> imgDst;
         Image<Bgr, byte> copyImage;
         Image<Bgr, byte> cpyImgPerspect;
+        
 
         Point[][] points1;
         UMat cannyImage = new UMat(); //initializing with matrix
@@ -33,9 +35,10 @@ namespace MCQ
             copyImage = img;
             cpyImgPerspect = img;
         }
-        void order(Point[] p)
+        void order(PointF[] p)
         {
-            
+            var rect = np.zeros((4, 2), dtype: np.float32);
+           // var s=np.sum()
         }
       
 
@@ -90,7 +93,7 @@ namespace MCQ
             //Point[,] points = new Point[4,2];
             CvInvoke.FindContours(cannyImage, vector, null, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //MCvScalar() is i think used for drawing with some sort of color (last argument is defining thickness)
-            CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
+           // CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
             //change image variable so that user can see change in images
             points1=vector.ToArrayOfArray();
             imageBox5.Image = img;
@@ -98,16 +101,19 @@ namespace MCQ
 
         private void Button4_Click(object sender, EventArgs e)
         {
-            
-            
+
+            Emgu.CV.Util.VectorOfPointF approx = new Emgu.CV.Util.VectorOfPointF();
             Emgu.CV.Util.VectorOfVectorOfPoint vecOut = new Emgu.CV.Util.VectorOfVectorOfPoint();
-            CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.List, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //Point defines the x-y coordinates in 2d-plane
             //using dictionary learn about 
-            Emgu.CV.Util.VectorOfPointF approx = new Emgu.CV.Util.VectorOfPointF();
+            
             Dictionary<int, double> dict = new Dictionary<int, double>();
             PointF[] point = new PointF[4];
+            
+            float[,] pointArray;
             NDArray nD;
+            
             if (vecOut.Size > 0)
             {
                 for (int i = 0; i < vecOut.Size; i++)
@@ -140,14 +146,20 @@ namespace MCQ
                         try
                         {
                             //MessageBox.Show("Size of approx: " + approx.Size);
+                            
                             CvInvoke.DrawContours(copyImage, vecOut, key, new MCvScalar(255, 0, 0), 5);
-                            for(int i=0;i<approx.Size;i++)
-                            {
-                                
-                                point[i] = approx[i];
-                              //  MessageBox.Show("Contour: " + point[i]);
-                               
-                            }
+                            //for (int i = 0; i < approx.Size; i++)
+                            //{
+                            //    for(int j=0;j<2;j++)
+                            //    {
+                            //        pointArray[i,j]
+                            //    }
+
+
+                            //}
+                            
+                            pointArray = new float[4, 2] { { approx[0].X, approx[0].Y }, { approx[1].X, approx[1].Y }, { approx[2].X, approx[2].Y }, { approx[3].X, approx[3].Y } };
+                            MessageBox.Show("Contour: " + pointArray[0, 0] + pointArray[0, 1]);
                         }
                         catch (Exception ex)
                         {
@@ -187,14 +199,15 @@ namespace MCQ
 
                 //MessageBox.Show("We have : " + arr.ToString());
 
-                PointF[] destCorners = new PointF[4];
-                destCorners[0] = new PointF(0, 0);
-                destCorners[1] = new PointF(0, 350);
-                destCorners[2] = new PointF(350, 350);
-                destCorners[3] = new PointF(350, 0);
-                Mat myWarpMat = CvInvoke.GetPerspectiveTransform(point, destCorners);
+                //PointF[] destCorners = new PointF[4];
+                //destCorners[0] = new PointF(0, 0);
+                //destCorners[1] = new PointF(0, 350);
+                //destCorners[2] = new PointF(350, 350);
+                //destCorners[3] = new PointF(350, 0);
 
-                // cpyImgPerspect = cpyImgPerspect.WarpPerspective<byte>(myWarpMat, Emgu.CV.CvEnum.Inter.Linear, Emgu.CV.CvEnum.Warp.FillOutliers, Emgu.CV.CvEnum.BorderType.Transparent, new Bgr());
+                //Mat myWarpMat = CvInvoke.GetPerspectiveTransform(vecOut, destCorners);
+
+                //cpyImgPerspect = cpyImgPerspect.WarpPerspective(myWarpMat, Emgu.CV.CvEnum.Inter.Nearest, Emgu.CV.CvEnum.Warp.FillOutliers, Emgu.CV.CvEnum.BorderType.Transparent, new Bgr());
                 ////cpyImgPerspect= cpyImgPerspect.WarpAffine
                 // CvInvoke.Imshow("img", cpyImgPerspect);
 
@@ -205,9 +218,15 @@ namespace MCQ
                 //var abc = cpyImgPerspect.Copy();
                 //cpyImgPerspect.ROI = Rectangle.Empty;
                 //imageBox7.Image = abc;
+
+                //CvInvoke.PerspectiveTransform(cpyImgPerspect, cpyImgPerspect, myWarpMat);
+                //imageBox7.Image = cpyImgPerspect;
+                //NDArray arr = np.array<PointF>(point, true);
                 
-                CvInvoke.PerspectiveTransform(cpyImgPerspect, cpyImgPerspect, myWarpMat);
-                imageBox7.Image = cpyImgPerspect;
+               // NDArray arr = np.array(pointArray, dtype: np.float32, 1, true, 'C');
+                // MessageBox.Show("Data: " + arr.ToString());
+                //add items to nd array
+
             }
             catch (Exception er)
             {

@@ -98,21 +98,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="DM\Assignment1 %281%29.docx" />
-    <None Include="DM\Assignment2 %281%29.docx" />
-    <None Include="DM\epdf.pub_discretemathematicswithapplications4thedition.pdf" />
-    <None Include="DM\lecture__1.ppt" />
-    <None Include="DM\lecture__2.ppt" />
-    <None Include="DM\lecture__3.ppt" />
-    <None Include="DM\lecture__4.ppt" />
-    <None Include="DM\lecture__5.ppt" />
-    <None Include="DM\lecture__6.ppt" />
-    <None Include="DM\lecture__7.ppt" />
-    <None Include="DM\Quiz1_2B.docx" />
-    <None Include="DM\Rosen_Discrete_Mathematics_and_Its_Appli.pdf" />
-    <None Include="DM\Sol_Quiz1__2A.pdf" />
-    <None Include="DM\Sol_Quiz2.pdf" />
-    <None Include="DM\Venn_Diagrams.ppt" />
     <None Include="packages.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -132,8 +117,6 @@
   <ItemGroup>
     <Content Include="concrt140.dll" />
     <Content Include="cvextern.dll" />
-    <Content Include="DM\laws 1.PNG" />
-    <Content Include="DM\laws.PNG" />
     <Content Include="License-LGPL.txt" />
     <Content Include="mcqSample.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
