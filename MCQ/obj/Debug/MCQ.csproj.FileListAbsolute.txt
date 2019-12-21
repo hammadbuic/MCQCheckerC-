@@ -52,5 +52,3 @@ E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.csproj.CopyComplete
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.exe
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.pdb
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.csprojAssemblyReference.cache
-E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\MathNet.Numerics.dll
-E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\MathNet.Numerics.xml

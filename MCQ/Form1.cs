@@ -13,8 +13,6 @@ using Emgu.Util;
 using Emgu.CV.Structure;
 using NumSharp.Utilities;
 using NumSharp;
-using MathNet;
-using MathNet.Numerics.LinearAlgebra;
 namespace MCQ
 {
     public partial class Form1 : Form
@@ -24,7 +22,7 @@ namespace MCQ
         Image<Gray, Byte> imgGray;
         Image<Bgr, byte> imgDst;
         Image<Bgr, byte> copyImage;
-        Image<Bgr, byte> cpyImgPerspect;
+        Image<Bgr, float> cpyImgPerspect;
         
 
         
@@ -35,19 +33,55 @@ namespace MCQ
             img = new Image<Bgr, Byte>(fileName);
             imageBox1.Image = img;
             copyImage = img;
-            cpyImgPerspect = img;
+            cpyImgPerspect = new Image<Bgr, float>(fileName);
+            
         }
-        void order(Emgu.CV.Util.VectorOfPointF p)
+        PointF[] order(Emgu.CV.Util.VectorOfPoint p)
         {
-            Emgu.CV.Util.VectorOfRect rect =new Emgu.CV.Util.VectorOfRect();
-            //var rect=np.zeros((4, 2), dtype: np.float32);
-            //var rectMat = Mat.Zeros(4, 2, Emgu.CV.CvEnum.DepthType.Cv32F, 0);
-            List<PointF> rectList = new List<PointF>();
-            PointF[] point = p.ToArray();
-            var s = CvInvoke.Sum(p);//understand nd array axis first
-            point[0]=p[Math.Min()]
+            PointF[] rectPoint = new PointF[4];
+            int[] sum = new int[4];
+            for(int i=0;i<sum.Length;i++)  //Traversing for sum of p(x+y) & save in array
+            {
+                sum[i] = p[i].X + p[i].Y;
+            }
+            // Getting Index of Point with Maximum (x+y) sum:: Bottom Right Point [2]
+            int maxValue = sum.Max();
+            int maxIndex = sum.ToList<int>().IndexOf(maxValue);
+            
+            rectPoint[2] = p[maxIndex];   //Setting to bottom-right point
+
+            // Getting index of Point with Minimum (x+y) sum :: Top-Left Point [0]
+            int minValue = sum.Min();
+            int minIndex = sum.ToList<int>().IndexOf(minValue);
+
+            rectPoint[0] = p[minIndex];  //setting to Top-left Point
+
+            int[] diff = new int[4];
+            for(int i=0;i<diff.Length;i++)  //Traversing for difference p(x-y) and save in array
+            {
+                diff[i] = p[i].X - p[i].Y;
+                MessageBox.Show("diff " + i + " = " + diff[i]);
+            }
+
+            // Getting index of Point with minimum (x-y) diff:: Top-right Point [1]
+
+            int minDiff = diff.Min();
+            int minDiffIndex = diff.ToList<int>().IndexOf(minDiff);
+
+            rectPoint[1] = p[minDiffIndex];  // Setting Top-Right Point
+
+            // Getting Index of point with maximum (x-y) diff :: Bottom-Left Point [3]
+
+            int maxDiff = diff.Max();
+            int maxDiffIndex = diff.ToList<int>().IndexOf(maxDiff);
+
+            rectPoint[3] = p[maxDiffIndex]; // Setting Bottom-left Point
+            MessageBox.Show("max diff: " + rectPoint[3]);
+
+            //return rectPoint  top-left [0] :  top-right [1]: bottom-right [2]: bottom-left [3]
+            return rectPoint;
         }
-      
+
 
         private void Button2_Click(object sender, EventArgs e)
         {
@@ -65,14 +99,58 @@ namespace MCQ
                 ofd.Filter = " Image Files(*.tif;*.dcm;*.jpg;*.jpeg;*.bmp)|*.tif;*.dcm;*.jpg;*.jpeg;*.bmp";
                 imageBox1.Image = img;          //Displaying image in image Box
                 copyImage = img; //Copy of the orignal immage
-                cpyImgPerspect = img;
+                cpyImgPerspect = new Image<Bgr, float>(fileName);
             }
         }
-        void orderThePoints(PointF[,] p)
+        Image<Bgr,float> transformImage(Image<Bgr,float> image,Emgu.CV.Util.VectorOfPoint points)
         {
-            
-            
-            
+            var orderPoints=order(points);      // Ordering the Points in Particular Order
+            //Assigning to Points Orderwise For Mathematical Operations
+            PointF topLeft = orderPoints[0];
+            PointF topRight = orderPoints[1];
+            PointF bottomRight = orderPoints[2];
+            PointF bottomLeft = orderPoints[3];
+
+            // Calculating Width
+
+            double widthSqrt = Math.Pow(bottomRight.X - bottomLeft.X, 2) + Math.Pow(bottomRight.Y - bottomLeft.Y, 2);
+            double widthA = Math.Sqrt(widthSqrt);
+            double widthBsqrt = Math.Pow(topRight.X - topLeft.X, 2) + Math.Pow(topRight.Y - topLeft.Y, 2);
+            double widthB = Math.Sqrt(widthBsqrt);
+            int maxWidth = Convert.ToInt32(Math.Max(widthA, widthB));
+
+            // Calculating Height
+
+            double heightSqrt = Math.Pow(topRight.X - bottomRight.X, 2) + Math.Pow(topRight.Y - bottomRight.Y, 2);
+            double heightA = Math.Sqrt(heightSqrt);
+            double heightBSqrt = Math.Pow(topLeft.X - bottomLeft.X, 2) + Math.Pow(topLeft.Y - bottomLeft.Y, 2);
+            double heightB = Math.Sqrt(heightBSqrt);
+            int maxHeight = Convert.ToInt32(Math.Max(heightA, heightB));
+
+            // getting dest Points
+
+            PointF[] destPoints = new PointF[4]
+            {
+                new PointF { X = 0 , Y = 0 },
+                new PointF { X = maxWidth - 1 , Y = 0 },
+                new PointF { X = maxWidth - 1 ,Y = maxHeight - 1 },
+                new PointF { X =  0, Y = maxHeight - 1 }
+            };
+             //var mat=CvInvoke.FindHomography(orderPoints, destPoints, Emgu.CV.CvEnum.RobustEstimationAlgorithm.AllPoints, 3, null);
+            //var mat=Mat.Zeros(3, 3, Emgu.CV.CvEnum.DepthType.Cv32F, 0);
+            var mat = CvInvoke.GetPerspectiveTransform(orderPoints, destPoints);
+            Matrix<float> matrix = new Matrix<float>(3, 3);
+            mat.CopyTo(matrix);
+            //var mat = CvInvoke.GetAffineTransform(orderPoints, destPoints);
+            //image = image.WarpAffine(mat, Emgu.CV.CvEnum.Inter.Linear, Emgu.CV.CvEnum.Warp.Default, Emgu.CV.CvEnum.BorderType.Constant,new Bgr(23,40,60));
+
+            //image = mat.ToImage<Bgr, float>();
+            //CvInvoke.Invert(mat, mat, Emgu.CV.CvEnum.DecompMethod.LU);
+            Image<Bgr, float> destImage = new Image<Bgr, float>(maxWidth, maxHeight);
+           // CvInvoke.WarpPerspective(image, image, mat, image.Size, Emgu.CV.CvEnum.Inter.Lanczos4, Emgu.CV.CvEnum.Warp.FillOutliers, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(255,255,255));
+            image = image.WarpPerspective<float>(matrix, maxWidth, maxHeight, Emgu.CV.CvEnum.Inter.Nearest, Emgu.CV.CvEnum.Warp.Default, Emgu.CV.CvEnum.BorderType.Default, new Bgr(255, 255, 255));
+
+            return image;
         }
         private void Button3_Click(object sender, EventArgs e)
         {
@@ -104,14 +182,14 @@ namespace MCQ
         private void Button4_Click(object sender, EventArgs e)
         {
             //float[,] pointArray;
-            Emgu.CV.Util.VectorOfPointF approx = new Emgu.CV.Util.VectorOfPointF();
+            Emgu.CV.Util.VectorOfPoint approx = new Emgu.CV.Util.VectorOfPoint();
             Emgu.CV.Util.VectorOfVectorOfPoint vecOut = new Emgu.CV.Util.VectorOfVectorOfPoint();
             CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //Point defines the x-y coordinates in 2d-plane
             //using dictionary learn about 
             
             Dictionary<int, double> dict = new Dictionary<int, double>();
-            PointF[] point = new PointF[4];
+            Point[] point = new Point[4];
             
             
             
@@ -177,54 +255,17 @@ namespace MCQ
             
             try
             {
-                //Emgu.CV.Util.VectorOfPointF destCorners,srcCorners = new Emgu.CV.Util.VectorOfPointF();
-                //destCorners = approx;
-                //srcCorners = approx;
-                //Mat srcMat = CvInvoke.Imread(fileName);
-                //Mat destMat = new Mat();
-                //Mat warpMat = CvInvoke.GetPerspectiveTransform(srcCorners, destCorners);
-                //CvInvoke.WarpPerspective(srcMat, destMat, warpMat, new System.Drawing.Size(4800, 6000), Emgu.CV.CvEnum.Inter.Linear, Emgu.CV.CvEnum.Warp.Default, Emgu.CV.CvEnum.BorderType.Transparent);
-                //imageBox7.Image = destMat.ToImage<Bgr, byte>();
-                //orderThePoints(point);
-                //cpyImgPerspect.Convert<Point, byte>();
-                //Mat matrix=CvInvoke.GetPerspectiveTransform(approx, cvArray);
-                //var nd = np.array(point, true).reshape(4, 2);
-
-                //NDArray arr = np.asarray(10);
-                //arr = np.asarray(50);
-
-                //MessageBox.Show("We have : " + arr.ToString());
-
-                //PointF[] destCorners = new PointF[4];
-                //destCorners[0] = new PointF(0, 0);
-                //destCorners[1] = new PointF(0, 350);
-                //destCorners[2] = new PointF(350, 350);
-                //destCorners[3] = new PointF(350, 0);
-
-                //Mat myWarpMat = CvInvoke.GetPerspectiveTransform(vecOut, destCorners);
-
-                //cpyImgPerspect = cpyImgPerspect.WarpPerspective(myWarpMat, Emgu.CV.CvEnum.Inter.Nearest, Emgu.CV.CvEnum.Warp.FillOutliers, Emgu.CV.CvEnum.BorderType.Transparent, new Bgr());
-                ////cpyImgPerspect= cpyImgPerspect.WarpAffine
-                // CvInvoke.Imshow("img", cpyImgPerspect);
-
-                //imageBox7.Image = cpyImgPerspect;
-
-                //Rectangle rectangle = CvInvoke.BoundingRectangle(approx);
-                //cpyImgPerspect.ROI = rectangle;
-                //var abc = cpyImgPerspect.Copy();
-                //cpyImgPerspect.ROI = Rectangle.Empty;
-                //imageBox7.Image = abc;
-
-                //CvInvoke.PerspectiveTransform(cpyImgPerspect, cpyImgPerspect, myWarpMat);
-                //imageBox7.Image = cpyImgPerspect;
-                //NDArray arr = np.array<PointF>(point, true);
-
-                // NDArray arr = np.array(pointArray, dtype: np.float32, 1, true, 'C');
-                // MessageBox.Show("Data: " + arr.ToString());
-                //add items to nd array
-                var s=CvInvoke.Sum(approx);
+                Rectangle rect = CvInvoke.BoundingRectangle(approx);
+                cpyImgPerspect.ROI = rect;
+                var abc = cpyImgPerspect.Copy();
                 
-                order(point);
+                Image<Bgr, float> abc1 = transformImage(abc, approx);
+                imageBox7.Image = abc1;
+                
+                
+               
+
+                
             }
             catch (Exception er)
             {
@@ -237,13 +278,7 @@ namespace MCQ
 
         private void ContourBtn_Click(object sender, EventArgs e)
         {
-            Image<Gray, byte> imgContour = img.Convert<Gray, byte>().ThresholdBinary(new Gray(120), new Gray(255));
-            imageBox2.Image = imgContour;
-            cannyImage.ConvertTo(imgContour, Emgu.CV.CvEnum.DepthType.Default,-1,0);
-            //imageBox1.Image = cannyImage;
-            Emgu.CV.Util.VectorOfVectorOfPoint Contour = new Emgu.CV.Util.VectorOfVectorOfPoint();
-            CvInvoke.FindContours(cannyImage, Contour, null, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
-            imageBox1.Image = img;
+            
         }
     }
 }
