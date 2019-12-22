@@ -11,8 +11,7 @@ using Emgu;
 using Emgu.CV;
 using Emgu.Util;
 using Emgu.CV.Structure;
-using NumSharp.Utilities;
-using NumSharp;
+using AForge.Imaging;
 namespace MCQ
 {
     public partial class Form1 : Form
@@ -23,6 +22,7 @@ namespace MCQ
         Image<Bgr, byte> imgDst;
         Image<Bgr, byte> copyImage;
         Image<Bgr, float> cpyImgPerspect;
+        Bitmap bitmapImage;
         
 
         
@@ -34,6 +34,7 @@ namespace MCQ
             imageBox1.Image = img;
             copyImage = img;
             cpyImgPerspect = new Image<Bgr, float>(fileName);
+            bitmapImage = new Bitmap(fileName);
             
         }
         PointF[] order(Emgu.CV.Util.VectorOfPoint p)
@@ -100,11 +101,16 @@ namespace MCQ
                 imageBox1.Image = img;          //Displaying image in image Box
                 copyImage = img; //Copy of the orignal immage
                 cpyImgPerspect = new Image<Bgr, float>(fileName);
+                bitmapImage = new Bitmap(fileName);
             }
         }
         Image<Bgr,float> transformImage(Image<Bgr,float> image,Emgu.CV.Util.VectorOfPoint points)
         {
             var orderPoints=order(points);      // Ordering the Points in Particular Order
+           for(int i=0;i<points.Size;i++)
+            {
+                MessageBox.Show("X= " + orderPoints[i].X + "Y= " + orderPoints[i].Y);
+            }
             //Assigning to Points Orderwise For Mathematical Operations
             PointF topLeft = orderPoints[0];
             PointF topRight = orderPoints[1];
@@ -128,6 +134,7 @@ namespace MCQ
             int maxHeight = Convert.ToInt32(Math.Max(heightA, heightB));
 
             // getting dest Points
+            MessageBox.Show("Max Width: " + maxWidth + " Max Height: " + maxHeight);
 
             PointF[] destPoints = new PointF[4]
             {
@@ -139,6 +146,7 @@ namespace MCQ
              //var mat=CvInvoke.FindHomography(orderPoints, destPoints, Emgu.CV.CvEnum.RobustEstimationAlgorithm.AllPoints, 3, null);
             //var mat=Mat.Zeros(3, 3, Emgu.CV.CvEnum.DepthType.Cv32F, 0);
             var mat = CvInvoke.GetPerspectiveTransform(orderPoints, destPoints);
+            MessageBox.Show("Mat rows: " + mat.Rows + " Mat cols: " + mat.Cols);
             Matrix<float> matrix = new Matrix<float>(3, 3);
             mat.CopyTo(matrix);
             //var mat = CvInvoke.GetAffineTransform(orderPoints, destPoints);
@@ -147,9 +155,12 @@ namespace MCQ
             //image = mat.ToImage<Bgr, float>();
             //CvInvoke.Invert(mat, mat, Emgu.CV.CvEnum.DecompMethod.LU);
             Image<Bgr, float> destImage = new Image<Bgr, float>(maxWidth, maxHeight);
-           // CvInvoke.WarpPerspective(image, image, mat, image.Size, Emgu.CV.CvEnum.Inter.Lanczos4, Emgu.CV.CvEnum.Warp.FillOutliers, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(255,255,255));
-            image = image.WarpPerspective<float>(matrix, maxWidth, maxHeight, Emgu.CV.CvEnum.Inter.Nearest, Emgu.CV.CvEnum.Warp.Default, Emgu.CV.CvEnum.BorderType.Default, new Bgr(255, 255, 255));
-
+            image=image.Resize(   maxWidth, maxHeight, Emgu.CV.CvEnum.Inter.Linear);
+            MessageBox.Show("Size of Image: " + image.Size);
+            CvInvoke.WarpPerspective(image, image, mat, image.Size, Emgu.CV.CvEnum.Inter.Lanczos4, Emgu.CV.CvEnum.Warp.FillOutliers, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar(255,255,255));
+            //image = image.WarpPerspective<float>(matrix, maxWidth, maxHeight, Emgu.CV.CvEnum.Inter.Nearest, Emgu.CV.CvEnum.Warp.Default, Emgu.CV.CvEnum.BorderType.Default, new Bgr(255, 255, 255));
+            //CvInvoke.Rotate(image, image, Emgu.CV.CvEnum.RotateFlags.Rotate90CounterClockwise);
+            //destImage = mat.ToImage<Bgr, float>();
             return image;
         }
         private void Button3_Click(object sender, EventArgs e)
@@ -189,7 +200,8 @@ namespace MCQ
             //using dictionary learn about 
             
             Dictionary<int, double> dict = new Dictionary<int, double>();
-            Point[] point = new Point[4];
+            AForge.IntPoint[] point = new AForge.IntPoint[4];
+            //Point[] point = new Point[4];
             
             
             
@@ -231,7 +243,10 @@ namespace MCQ
                             CvInvoke.DrawContours(copyImage, vecOut, key, new MCvScalar(255, 0, 0), 5);
                             for (int i = 0; i < approx.Size; i++)
                             {
-                                point[i]=approx[i];
+
+                                point[i].X=approx[i].X;
+                                point[i].Y = approx[i].Y;
+                                
                             }
                             
                         }
@@ -255,12 +270,25 @@ namespace MCQ
             
             try
             {
-                Rectangle rect = CvInvoke.BoundingRectangle(approx);
-                cpyImgPerspect.ROI = rect;
-                var abc = cpyImgPerspect.Copy();
-                
-                Image<Bgr, float> abc1 = transformImage(abc, approx);
-                imageBox7.Image = abc1;
+                //Rectangle rect = CvInvoke.BoundingRectangle(approx);
+                //cpyImgPerspect.ROI = rect;
+                //var abc = cpyImgPerspect.Copy();
+
+                //Image<Bgr, float> abc1 = transformImage(abc, approx);
+
+                List<AForge.IntPoint> pointList = new List<AForge.IntPoint>();
+                for(int i=0;i<4;i++)
+                {
+                    pointList.Add(new AForge.IntPoint(point[i].X, point[i].Y));
+                }
+                AForge.Imaging.Filters.SimpleQuadrilateralTransformation simple = new AForge.Imaging.Filters.SimpleQuadrilateralTransformation(pointList,200,200);
+                Bitmap abc1 = simple.Apply(bitmapImage);
+                AForge.Imaging.Filters.Mirror m = new AForge.Imaging.Filters.Mirror(false, true);
+                m.ApplyInPlace(abc1);
+                Image<Bgr, float> newIm = new Image<Bgr, float>(abc1);
+                pictureBox1.Image = newIm.ToBitmap();
+                CvInvoke.Rotate(newIm, newIm, Emgu.CV.CvEnum.RotateFlags.Rotate90CounterClockwise);
+                imageBox7.Image = newIm;
                 
                 
                

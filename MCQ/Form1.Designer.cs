@@ -43,6 +43,7 @@
             this.imageBox5 = new Emgu.CV.UI.ImageBox();
             this.imageBox6 = new Emgu.CV.UI.ImageBox();
             this.imageBox7 = new Emgu.CV.UI.ImageBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).BeginInit();
@@ -50,6 +51,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.imageBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -96,7 +98,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(536, 422);
+            this.button2.Location = new System.Drawing.Point(674, 434);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 4;
@@ -189,12 +191,22 @@
             this.imageBox7.TabIndex = 2;
             this.imageBox7.TabStop = false;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(366, 304);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(170, 153);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 8;
+            this.pictureBox1.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(28)))), ((int)(((byte)(38)))));
             this.ClientSize = new System.Drawing.Size(888, 480);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.imageBox7);
             this.Controls.Add(this.imageBox6);
             this.Controls.Add(this.imageBox5);
@@ -219,6 +231,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.imageBox5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -240,6 +253,7 @@
         private Emgu.CV.UI.ImageBox imageBox5;
         private Emgu.CV.UI.ImageBox imageBox6;
         private Emgu.CV.UI.ImageBox imageBox7;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

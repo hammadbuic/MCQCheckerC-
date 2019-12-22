@@ -6,7 +6,6 @@ E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\x64\vcruntime140.dll
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\MCQ.exe
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\Emgu.CV.UI.dll
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\Emgu.CV.World.dll
-E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\NumSharp.Core.dll
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\x86\concrt140.dll
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\x86\cvextern.dll
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\x86\msvcp140.dll
@@ -25,7 +24,6 @@ E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Runtime.CompilerServices.Unsa
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\ZedGraph.dll
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\Emgu.CV.UI.xml
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\Emgu.CV.World.xml
-E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\NumSharp.Core.pdb
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Buffers.xml
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Memory.xml
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\System.Numerics.Vectors.xml
@@ -52,3 +50,9 @@ E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.csproj.CopyComplete
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.exe
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.pdb
 E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\obj\Debug\MCQ.csprojAssemblyReference.cache
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\AForge.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\AForge.Imaging.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\AForge.Math.dll
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\AForge.xml
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\AForge.Imaging.xml
+E:\BSE 5A\VP lab\MCQCheckerc-\MCQ\bin\Debug\AForge.Math.xml
