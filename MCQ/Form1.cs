@@ -11,6 +11,7 @@ using Emgu;
 using Emgu.CV;
 using Emgu.Util;
 using Emgu.CV.Structure;
+using System.IO;
 using AForge.Imaging;
 namespace MCQ
 {
@@ -22,6 +23,7 @@ namespace MCQ
         Image<Bgr, byte> imgDst;
         Image<Bgr, byte> copyImage;
         Image<Bgr, float> cpyImgPerspect;
+        Image<Bgr, byte> transformedImage;
         Bitmap bitmapImage;
         
 
@@ -172,8 +174,9 @@ namespace MCQ
             CvInvoke.GaussianBlur(imgGray, imgGray, new Size(5, 5), 0);
             
             // using adaptive threshhold
-            CvInvoke.AdaptiveThreshold(imgGray, imgGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 75, 10);
-            CvInvoke.BitwiseNot(imgGray, imgGray);
+            CvInvoke.AdaptiveThreshold(imgGray, imgGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.BinaryInv, 75, 10);
+            //CvInvoke.BitwiseNot(imgGray, imgGray);
+            
             imageBox3.Image = imgGray;
             //Applying canny
             //initialize canny matrix
@@ -192,7 +195,6 @@ namespace MCQ
 
         private void Button4_Click(object sender, EventArgs e)
         {
-            //float[,] pointArray;
             Emgu.CV.Util.VectorOfPoint approx = new Emgu.CV.Util.VectorOfPoint();
             Emgu.CV.Util.VectorOfVectorOfPoint vecOut = new Emgu.CV.Util.VectorOfVectorOfPoint();
             CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
@@ -201,11 +203,6 @@ namespace MCQ
             
             Dictionary<int, double> dict = new Dictionary<int, double>();
             AForge.IntPoint[] point = new AForge.IntPoint[4];
-            //Point[] point = new Point[4];
-            
-            
-            
-            
             if (vecOut.Size > 0)
             {
                 for (int i = 0; i < vecOut.Size; i++)
@@ -216,7 +213,7 @@ namespace MCQ
                     
                 }
                 var item = dict.OrderByDescending(v => v.Value);  //.Take(1);
-
+                
                 
                 //Preparing for perspective transformation
                 foreach (var it in item)
@@ -285,15 +282,14 @@ namespace MCQ
                 Bitmap abc1 = simple.Apply(bitmapImage);
                 AForge.Imaging.Filters.Mirror m = new AForge.Imaging.Filters.Mirror(false, true);
                 m.ApplyInPlace(abc1);
-                Image<Bgr, float> newIm = new Image<Bgr, float>(abc1);
-                pictureBox1.Image = newIm.ToBitmap();
+                Image<Bgr, byte> newIm = new Image<Bgr, byte>(abc1);
                 CvInvoke.Rotate(newIm, newIm, Emgu.CV.CvEnum.RotateFlags.Rotate90CounterClockwise);
                 imageBox7.Image = newIm;
-                
-                
+
                
 
-                
+                transformedImage = newIm.Copy();
+                imageBox8.Image = transformedImage;
             }
             catch (Exception er)
             {
@@ -306,7 +302,120 @@ namespace MCQ
 
         private void ContourBtn_Click(object sender, EventArgs e)
         {
+            //Finding Question Contours
+            //careful with image order change it as soon
+            Image<Bgr, byte> transCopy = transformedImage.Copy();
+            Emgu.CV.Util.VectorOfVectorOfPoint qtnVect = new Emgu.CV.Util.VectorOfVectorOfPoint();
+
+            Image<Gray, byte> qtnGray = transCopy.Convert<Gray, byte>();
+            CvInvoke.GaussianBlur(qtnGray, qtnGray, new Size(5, 5), 0);
+            MessageBox.Show("Guassian Blurr");
+            imageBox8.Image = qtnGray;
+            CvInvoke.AdaptiveThreshold(qtnGray, qtnGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.BinaryInv, 11, 2);
+            //CvInvoke.BitwiseNot(qtnGray, qtnGray);
+
+            //CvInvoke.Threshold(qtnGray, qtnGray, 0, 255, Emgu.CV.CvEnum.ThresholdType.Otsu );
             
+            MessageBox.Show("Binarized Image");
+            imageBox8.Image = qtnGray;
+            //UMat qtnCanny = new UMat();
+            //CvInvoke.Canny(qtnGray, qtnCanny, 20, 255);
+            //MessageBox.Show("canny image");
+            //imageBox8.Image = qtnCanny.ToImage<Bgr, byte>();
+            CvInvoke.FindContours(qtnGray, qtnVect, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple, default);
+            //CvInvoke.DrawContours(newIm, qtnVect, -1, new MCvScalar(200, 30, 10), 2);
+
+
+            //RECTANGLE METHOD
+
+            //List<Emgu.CV.Util.VectorOfPoint> qtnList = new List<Emgu.CV.Util.VectorOfPoint>();
+
+            //Emgu.CV.Util.VectorOfVectorOfPoint test = new Emgu.CV.Util.VectorOfVectorOfPoint();
+
+            //for (int i = 0; i < qtnVect.Size; i++)
+            //{
+            //    // do it with approx poly dp
+            //Rectangle rect = CvInvoke.BoundingRectangle(qtnVect[i]);
+            ////CvInvoke.Rectangle(newIm, rect, new MCvScalar(50, 10, 10), 1);
+
+            //var aspectRatio = (rect.Width) / (float)rect.Height;
+
+            //if (rect.Width >= 20 && rect.Height >= 0.9 && aspectRatio <= 1.1)
+            //{
+            //        qtnList.Add(qtnVect[i]);
+
+
+            //    }
+
+            //}
+            //MessageBox.Show("tpe: " + qtnVect[1].GetType());
+            //for (int i = 0; i < qtnList.Count; i++)
+            //{
+            //    test.Push(qtnList[i]);
+            //    CvInvoke.DrawContours(transformedImage, test, -1, new MCvScalar(0, 30, 200), 2);
+
+            //}
+            //test.Clear();
+            //qtnList.Clear();
+
+
+            Emgu.CV.Util.VectorOfVectorOfPoint test = new Emgu.CV.Util.VectorOfVectorOfPoint();
+            Emgu.CV.Util.VectorOfPoint qtnApprox = new Emgu.CV.Util.VectorOfPoint();
+            Dictionary<int, double> qtnDict = new Dictionary<int, double>();
+            if (qtnVect.Size > 0)
+            {
+                for (int i = 0; i < qtnVect.Size; i++)
+                {
+                    double area = CvInvoke.ContourArea(qtnVect[i]);
+                    //MessageBox.Show("Area " + i +": "+ area);
+                    if (area > 70 )
+                    {
+                        qtnDict.Add(i, area);
+                    }
+
+                    var item = qtnDict.OrderByDescending(v => v.Value);  //.Take(1);
+                    
+
+
+                    List<Rectangle> rectList = new List<Rectangle>();
+                    foreach (var it in item)
+                    {
+                        int key = Convert.ToInt32(it.Key.ToString());
+                        double peri = CvInvoke.ArcLength(qtnVect[key], true);
+                        CvInvoke.ApproxPolyDP(qtnVect[key], qtnApprox, 0.02 * peri, true);
+
+                        if (qtnApprox.Size == 0)
+                        {
+
+                        }
+                        else if (qtnApprox.Size > 6)
+                        {
+                            CvInvoke.DrawContours(transformedImage, qtnVect, key, new MCvScalar(255, 0, 0), 2);
+
+                            Rectangle rect = CvInvoke.BoundingRectangle(qtnVect[key]);
+                            rectList.Add(rect);
+                            //var aspectRatio = (rect.Width) / (float)(rect.Height);
+                            //if(rect.Width>=10 && rect.Height>=10 && aspectRatio>=0.2 && aspectRatio<=1.1)
+                            //{
+                            //    CvInvoke.DrawContours(transformedImage, qtnVect, key, new MCvScalar(255, 0, 0));
+                            //}
+
+                        }
+                    }
+                    
+                    rectList = rectList.OrderBy(r => r.Left).ThenBy(r => r.Top).ToList();
+                    dataGridView1.DataSource = rectList;
+
+                }
+                imageBox8.Image = transformedImage;
+                //CvInvoke.DrawContours(newIm, test, -1, new MCvScalar(55, 60, 55), 2);
+                
+                
+
+            }
+
+
+
         }
     }
 }
