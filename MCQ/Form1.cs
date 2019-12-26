@@ -6,8 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
-using Emgu;
 using Emgu.CV;
 using Emgu.Util;
 using Emgu.CV.Structure;
@@ -308,16 +308,15 @@ namespace MCQ
             Emgu.CV.Util.VectorOfVectorOfPoint qtnVect = new Emgu.CV.Util.VectorOfVectorOfPoint();
 
             Image<Gray, byte> qtnGray = transCopy.Convert<Gray, byte>();
-            CvInvoke.GaussianBlur(qtnGray, qtnGray, new Size(5, 5), 0);
-            MessageBox.Show("Guassian Blurr");
-            imageBox8.Image = qtnGray;
-            CvInvoke.AdaptiveThreshold(qtnGray, qtnGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.BinaryInv, 11, 2);
-            //CvInvoke.BitwiseNot(qtnGray, qtnGray);
+            //CvInvoke.GaussianBlur(qtnGray, qtnGray, new Size(5, 5), 0);
+           
+            //MessageBox.Show("Guassian Blurr");
+            //imageBox8.Image = qtnGray;
 
-            //CvInvoke.Threshold(qtnGray, qtnGray, 0, 255, Emgu.CV.CvEnum.ThresholdType.Otsu );
+            CvInvoke.AdaptiveThreshold(qtnGray, qtnGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.BinaryInv, 11, 2);
             
             MessageBox.Show("Binarized Image");
-            imageBox8.Image = qtnGray;
+            imageBox7.Image = qtnGray;
             //UMat qtnCanny = new UMat();
             //CvInvoke.Canny(qtnGray, qtnCanny, 20, 255);
             //MessageBox.Show("canny image");
@@ -328,91 +327,96 @@ namespace MCQ
 
             //RECTANGLE METHOD
 
-            //List<Emgu.CV.Util.VectorOfPoint> qtnList = new List<Emgu.CV.Util.VectorOfPoint>();
-
-            //Emgu.CV.Util.VectorOfVectorOfPoint test = new Emgu.CV.Util.VectorOfVectorOfPoint();
-
-            //for (int i = 0; i < qtnVect.Size; i++)
-            //{
-            //    // do it with approx poly dp
-            //Rectangle rect = CvInvoke.BoundingRectangle(qtnVect[i]);
-            ////CvInvoke.Rectangle(newIm, rect, new MCvScalar(50, 10, 10), 1);
-
-            //var aspectRatio = (rect.Width) / (float)rect.Height;
-
-            //if (rect.Width >= 20 && rect.Height >= 0.9 && aspectRatio <= 1.1)
-            //{
-            //        qtnList.Add(qtnVect[i]);
-
-
-            //    }
-
-            //}
-            //MessageBox.Show("tpe: " + qtnVect[1].GetType());
-            //for (int i = 0; i < qtnList.Count; i++)
-            //{
-            //    test.Push(qtnList[i]);
-            //    CvInvoke.DrawContours(transformedImage, test, -1, new MCvScalar(0, 30, 200), 2);
-
-            //}
-            //test.Clear();
-            //qtnList.Clear();
-
+            List<Emgu.CV.Util.VectorOfPoint> qtnList = new List<Emgu.CV.Util.VectorOfPoint>();
 
             Emgu.CV.Util.VectorOfVectorOfPoint test = new Emgu.CV.Util.VectorOfVectorOfPoint();
-            Emgu.CV.Util.VectorOfPoint qtnApprox = new Emgu.CV.Util.VectorOfPoint();
-            Dictionary<int, double> qtnDict = new Dictionary<int, double>();
-            if (qtnVect.Size > 0)
+
+            for (int i = 0; i < qtnVect.Size; i++)
             {
-                for (int i = 0; i < qtnVect.Size; i++)
+                // do it with approx poly dp
+                Rectangle rect = CvInvoke.BoundingRectangle(qtnVect[i]);
+                //CvInvoke.Rectangle(newIm, rect, new MCvScalar(50, 10, 10), 1);
+
+                var aspectRatio = (rect.Width) / (float)rect.Height;
+
+                if (rect.Width >= 20 && rect.Height >= 20 && aspectRatio>=0.9 && aspectRatio <= 1.1)
                 {
-                    double area = CvInvoke.ContourArea(qtnVect[i]);
-                    //MessageBox.Show("Area " + i +": "+ area);
-                    if (area > 70 )
-                    {
-                        qtnDict.Add(i, area);
-                    }
-
-                    var item = qtnDict.OrderByDescending(v => v.Value);  //.Take(1);
-                    
-
-
-                    List<Rectangle> rectList = new List<Rectangle>();
-                    foreach (var it in item)
-                    {
-                        int key = Convert.ToInt32(it.Key.ToString());
-                        double peri = CvInvoke.ArcLength(qtnVect[key], true);
-                        CvInvoke.ApproxPolyDP(qtnVect[key], qtnApprox, 0.02 * peri, true);
-
-                        if (qtnApprox.Size == 0)
-                        {
-
-                        }
-                        else if (qtnApprox.Size > 6)
-                        {
-                            CvInvoke.DrawContours(transformedImage, qtnVect, key, new MCvScalar(255, 0, 0), 2);
-
-                            Rectangle rect = CvInvoke.BoundingRectangle(qtnVect[key]);
-                            rectList.Add(rect);
-                            //var aspectRatio = (rect.Width) / (float)(rect.Height);
-                            //if(rect.Width>=10 && rect.Height>=10 && aspectRatio>=0.2 && aspectRatio<=1.1)
-                            //{
-                            //    CvInvoke.DrawContours(transformedImage, qtnVect, key, new MCvScalar(255, 0, 0));
-                            //}
-
-                        }
-                    }
-                    
-                    rectList = rectList.OrderBy(r => r.Left).ThenBy(r => r.Top).ToList();
-                    dataGridView1.DataSource = rectList;
+                    qtnList.Add(qtnVect[i]);
+                    //MessageBox.Show("Rectangle width: " + rect.Width);
 
                 }
-                imageBox8.Image = transformedImage;
-                //CvInvoke.DrawContours(newIm, test, -1, new MCvScalar(55, 60, 55), 2);
-                
-                
 
             }
+            MessageBox.Show("tpe: " + qtnVect[1].GetType());
+            for (int i = 0; i < qtnList.Count; i++)
+            {
+                test.Push(qtnList[i]);
+                
+                CvInvoke.DrawContours(transformedImage, test, -1, new MCvScalar(0, 30, 200), 2);
+
+            }
+            test.Clear();
+            qtnList.Clear();
+            imageBox8.Image = transformedImage;
+
+            //Emgu.CV.Util.VectorOfVectorOfPoint test = new Emgu.CV.Util.VectorOfVectorOfPoint();
+            //Emgu.CV.Util.VectorOfPoint qtnApprox = new Emgu.CV.Util.VectorOfPoint();
+            //Dictionary<int, double> qtnDict = new Dictionary<int, double>();
+            //if (qtnVect.Size > 0)
+            //{
+            //    for (int i = 0; i < qtnVect.Size; i++)
+            //    {
+            //        double area = CvInvoke.ContourArea(qtnVect[i]);
+            //        //MessageBox.Show("Area " + i +": "+ area);
+            //        if (area > 70 )
+            //        {
+            //            qtnDict.Add(i, area);
+            //        }
+
+            //        var item = qtnDict.OrderByDescending(v => v.Value);  //.Take(1);
+
+
+            //        Emgu.CV.Util.VectorOfPoint approxList = new Emgu.CV.Util.VectorOfPoint();
+            //        List<CircleF> circList = new List<CircleF>();
+            //        foreach (var it in item)
+            //        {
+            //            int key = Convert.ToInt32(it.Key.ToString());
+            //            double peri = CvInvoke.ArcLength(qtnVect[key], true);
+            //            CvInvoke.ApproxPolyDP(qtnVect[key], qtnApprox, 0.02 * peri, true);
+
+            //            if (qtnApprox.Size == 0)
+            //            {
+
+            //            }
+            //            else if (qtnApprox.Size > 6)
+            //            {
+            //                //CvInvoke.DrawContours(transformedImage, qtnVect, key, new MCvScalar(255, 0, 0), 2);
+
+            //                CircleF circle = CvInvoke.MinEnclosingCircle(qtnVect[key]);
+            //                var a = circle.Center;
+            //                Point p = new Point();
+            //                p.X = (int)a.X;
+            //                p.Y = (int)a.Y;
+            //                //MessageBox.Show("Circle Area" + circle.Area);
+            //                CvInvoke.Circle(transformedImage, p, (int)circle.Radius, new MCvScalar(0, 0, 255), 2, Emgu.CV.CvEnum.LineType.Filled, 0);
+
+            //                circList.Add(circle);
+
+            //                imageBox8.Image = transformedImage;
+            //            }
+            //        }
+
+
+
+            //        dataGridView1.DataSource = circList;
+
+            //    }
+            //    imageBox8.Image = transformedImage;
+            //    //CvInvoke.DrawContours(newIm, test, -1, new MCvScalar(55, 60, 55), 2);
+
+
+
+            //}
 
 
 
