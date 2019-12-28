@@ -20,20 +20,17 @@ namespace MCQ
         string fileName = "mcqSample.jpg";
         Image<Bgr, Byte> img;
         Image<Gray, Byte> imgGray;
-        Image<Bgr, byte> imgDst;
         Image<Bgr, byte> copyImage;
         Image<Bgr, float> cpyImgPerspect;
         Image<Bgr, byte> transformedImage;
         Bitmap bitmapImage;
-        
-
-        
         UMat cannyImage = new UMat(); //initializing with matrix
+
         public Form1()
         {
             InitializeComponent();
             img = new Image<Bgr, Byte>(fileName);
-            imageBox1.Image = img;
+            orignalImage.Image = img;
             copyImage = img;
             cpyImgPerspect = new Image<Bgr, float>(fileName);
             bitmapImage = new Bitmap(fileName);
@@ -100,7 +97,7 @@ namespace MCQ
                 fileName = ofd.FileName;
                 img = new Image<Bgr, Byte>(fileName);
                 ofd.Filter = " Image Files(*.tif;*.dcm;*.jpg;*.jpeg;*.bmp)|*.tif;*.dcm;*.jpg;*.jpeg;*.bmp";
-                imageBox1.Image = img;          //Displaying image in image Box
+                orignalImage.Image = img;          //Displaying image in image Box
                 copyImage = img; //Copy of the orignal immage
                 cpyImgPerspect = new Image<Bgr, float>(fileName);
                 bitmapImage = new Bitmap(fileName);
@@ -167,30 +164,19 @@ namespace MCQ
         }
         private void Button3_Click(object sender, EventArgs e)
         {
-            //imgGray = new Image<Gray, Byte>(fileName);   //Converting Image to Grayscale
             imgGray = img.Convert<Gray, Byte>();
-            imageBox2.Image = imgGray;
             //Converted to blurred
             CvInvoke.GaussianBlur(imgGray, imgGray, new Size(5, 5), 0);
-            
             // using adaptive threshhold
             CvInvoke.AdaptiveThreshold(imgGray, imgGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.BinaryInv, 75, 10);
-            //CvInvoke.BitwiseNot(imgGray, imgGray);
-            
-            imageBox3.Image = imgGray;
-            //Applying canny
-            //initialize canny matrix
             CvInvoke.Canny(imgGray, cannyImage, 75, 200);
-            imageBox4.Image = cannyImage;
             cannyImage.ConvertTo(imgGray, Emgu.CV.CvEnum.DepthType.Default, -1, 0);
             Emgu.CV.Util.VectorOfVectorOfPoint vector = new Emgu.CV.Util.VectorOfVectorOfPoint();
-            //Point[,] points = new Point[4,2];
             CvInvoke.FindContours(cannyImage, vector, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
-            //MCvScalar() is i think used for drawing with some sort of color (last argument is defining thickness)
             CvInvoke.DrawContours(img, vector, -1, new MCvScalar(240, 0, 159),3);
-            //change image variable so that user can see change in images
-            ///points1=vector.ToArrayOfArray();
-            imageBox5.Image = img;
+            MessageBox.Show("Question Part Detected");
+            sheetDetectImage.Image = img;
+            
         }
 
         private void Button4_Click(object sender, EventArgs e)
@@ -199,7 +185,6 @@ namespace MCQ
             Emgu.CV.Util.VectorOfVectorOfPoint vecOut = new Emgu.CV.Util.VectorOfVectorOfPoint();
             CvInvoke.FindContours(cannyImage, vecOut, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
             //Point defines the x-y coordinates in 2d-plane
-            //using dictionary learn about 
             
             Dictionary<int, double> dict = new Dictionary<int, double>();
             AForge.IntPoint[] point = new AForge.IntPoint[4];
@@ -209,24 +194,16 @@ namespace MCQ
                 {
                     //calculating area of contours
                     double area = CvInvoke.ContourArea(vecOut[i]);
-                    dict.Add(i, area); //adding areas in dictionary i don't know why i did that
-                    
+                    dict.Add(i, area); //adding areas in dictionary
                 }
-                var item = dict.OrderByDescending(v => v.Value);  //.Take(1);
-                
-                
+                var item = dict.OrderByDescending(v => v.Value);
                 //Preparing for perspective transformation
                 foreach (var it in item)
                 {
-                    
                     int key = Convert.ToInt32(it.Key.ToString());
-
                     //generating arc length wrapping the doc
                     double peri = CvInvoke.ArcLength(vecOut[key], true);
-                    //MessageBox.Show("Key " + vecOut[key]);
-                   // p=vecOut[key].ToArray();
                     CvInvoke.ApproxPolyDP(vecOut[key], approx, 0.02 * peri, true);
-
                     if (approx.Size == 0)
                     {
 
@@ -235,8 +212,6 @@ namespace MCQ
                     {
                         try
                         {
-                            //MessageBox.Show("Size of approx: " + approx.Size);
-                            
                             CvInvoke.DrawContours(copyImage, vecOut, key, new MCvScalar(255, 0, 0), 5);
                             for (int i = 0; i < approx.Size; i++)
                             {
@@ -245,34 +220,19 @@ namespace MCQ
                                 point[i].Y = approx[i].Y;
                                 
                             }
-                            
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message);
                         }
-                        //Rectangle rect = CvInvoke.BoundingRectangle(vector[key]);
-                        //CvInvoke.Rectangle(img, rect, new MCvScalar(255, 0, 0), 3);
-                        // MessageBox.Show("Vector\n" + vector.ToArrayOfArray() + "\napprox\n" + approx.ToArray());
                         break;
                     }
                 }
             }
-            //var src = approx.ToArray();
-            //Apply four point func for transform
-            
-            //src.ResolveShape();
-
-            imageBox6.Image = copyImage;
+            sheetDetectImage.Image = copyImage;
             
             try
             {
-                //Rectangle rect = CvInvoke.BoundingRectangle(approx);
-                //cpyImgPerspect.ROI = rect;
-                //var abc = cpyImgPerspect.Copy();
-
-                //Image<Bgr, float> abc1 = transformImage(abc, approx);
-
                 List<AForge.IntPoint> pointList = new List<AForge.IntPoint>();
                 for(int i=0;i<4;i++)
                 {
@@ -284,55 +244,30 @@ namespace MCQ
                 m.ApplyInPlace(abc1);
                 Image<Bgr, byte> newIm = new Image<Bgr, byte>(abc1);
                 CvInvoke.Rotate(newIm, newIm, Emgu.CV.CvEnum.RotateFlags.Rotate90CounterClockwise);
-                imageBox7.Image = newIm;
-
-               
-
+                MessageBox.Show("Scanned Document");
+                sheetDetectImage.Image = newIm;
                 transformedImage = newIm.Copy();
-                imageBox8.Image = transformedImage;
             }
             catch (Exception er)
             {
                 MessageBox.Show(er.StackTrace);
             }
-         
-            
-
         }
 
-        private void ContourBtn_Click(object sender, EventArgs e)
+        private void BubbleDetectBtn_Click(object sender, EventArgs e)
         {
-            //Finding Question Contours
-            //careful with image order change it as soon
-            double cannyCircle = 180.0;
-            double circleAccum = 120.0;
-            transformedImage=transformedImage.Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear);
+
+            //Applying Operations on transformed Image
+            transformedImage = transformedImage.Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear);
             Image<Bgr, byte> transCopy = transformedImage.Copy();
             Emgu.CV.Util.VectorOfVectorOfPoint qtnVect = new Emgu.CV.Util.VectorOfVectorOfPoint();
-
             Image<Gray, byte> qtnGray = transCopy.Convert<Gray, byte>();
-            
             Image<Gray, byte> copyG = qtnGray.Copy();
-            CvInvoke.GaussianBlur(qtnGray, qtnGray, new Size(7, 5), 0);
-            
-            MessageBox.Show("Guassian Blurr");
-            imageBox8.Image = qtnGray;
-
-            CvInvoke.AdaptiveThreshold(qtnGray, qtnGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.MeanC, Emgu.CV.CvEnum.ThresholdType.Binary, 11, 2);
-            //CvInvoke.Threshold(qtnGray, qtnGray, 0, 200, Emgu.CV.CvEnum.ThresholdType.Otsu | Emgu.CV.CvEnum.ThresholdType.BinaryInv);
+            CvInvoke.GaussianBlur(qtnGray, qtnGray, new Size(5, 5), 0);
+            CvInvoke.AdaptiveThreshold(qtnGray, qtnGray, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 55, 9);
             CvInvoke.BitwiseNot(qtnGray, qtnGray);
-            MessageBox.Show("Binarized Image");
-            imageBox7.Image = qtnGray;
-            CvInvoke.FindContours(qtnGray, qtnVect, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone, default);
-            CircleF[] c = CvInvoke.HoughCircles(qtnGray, Emgu.CV.CvEnum.HoughType.Gradient, 2.0, 20.0, cannyCircle, circleAccum);
-            MessageBox.Show("circles: " + c.Length);
-            MessageBox.Show("Total Contours are " + qtnVect.Size);
+            CvInvoke.FindContours(qtnGray, qtnVect, null, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple, default);
 
-            for(int i=0;i<c.Length;i++)
-            {
-                transCopy.Draw(c[i], new Bgr(Color.Brown), 2);
-                imageBox1.Image = transCopy;
-            }
 
             //CIRCLE METHOD
             List<CircleF> circList = new List<CircleF>();
@@ -349,32 +284,33 @@ namespace MCQ
                         qtnDict.Add(i, area);
                     }
                 }
-                    var item = qtnDict.OrderByDescending(v => v.Value);  //.Take(1);
+                var item = qtnDict.OrderByDescending(v => v.Value);  //.Take(1);
 
+                Emgu.CV.Util.VectorOfPoint approxList = new Emgu.CV.Util.VectorOfPoint();
 
-                    Emgu.CV.Util.VectorOfPoint approxList = new Emgu.CV.Util.VectorOfPoint();
+                foreach (var it in item)
+                {
+                    int key = Convert.ToInt32(it.Key.ToString());
+                    double peri = CvInvoke.ArcLength(qtnVect[key], true);
+                    CvInvoke.ApproxPolyDP(qtnVect[key], qtnApprox, 0.02 * peri, true);
 
-                    foreach (var it in item)
+                    if (qtnApprox.Size == 0)
                     {
-                        int key = Convert.ToInt32(it.Key.ToString());
-                        double peri = CvInvoke.ArcLength(qtnVect[key], true);
-                        CvInvoke.ApproxPolyDP(qtnVect[key], qtnApprox, 0.02 * peri, true);
 
-                        if (qtnApprox.Size == 0)
-                        {
-
-                        }
-                        else if (qtnApprox.Size > 6)
-                        {
-
-                            
-                            break;
-                        }
                     }
-
-                imageBox8.Image = transformedImage;
+                    else if (qtnApprox.Size > 6)
+                    {
+                        CircleF circle = CvInvoke.MinEnclosingCircle(qtnVect[key]);
+                        Point centre = new Point();
+                        centre.X = (int)circle.Center.X;
+                        centre.Y = (int)circle.Center.Y;
+                        CvInvoke.Circle(transformedImage, centre, (int)circle.Radius, new MCvScalar(0, 255, 0), 2, Emgu.CV.CvEnum.LineType.Filled, 0);
+                        //break;
+                    }
+                }
+                MessageBox.Show("Bubbles Detected");
+                bubbleImage.Image = transformedImage;
             }
-
         }
     }
 }

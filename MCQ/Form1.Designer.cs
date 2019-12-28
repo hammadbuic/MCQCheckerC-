@@ -29,40 +29,29 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.button1 = new System.Windows.Forms.Button();
+            this.fileOpenButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.imageBox1 = new Emgu.CV.UI.ImageBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.imageBox2 = new Emgu.CV.UI.ImageBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.contourBtn = new System.Windows.Forms.Button();
-            this.imageBox3 = new Emgu.CV.UI.ImageBox();
-            this.imageBox4 = new Emgu.CV.UI.ImageBox();
-            this.imageBox5 = new Emgu.CV.UI.ImageBox();
-            this.imageBox6 = new Emgu.CV.UI.ImageBox();
-            this.imageBox7 = new Emgu.CV.UI.ImageBox();
-            this.imageBox8 = new Emgu.CV.UI.ImageBox();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox8)).BeginInit();
+            this.sheetBtn = new System.Windows.Forms.Button();
+            this.detectMcqBtn = new System.Windows.Forms.Button();
+            this.sheetDetectImage = new Emgu.CV.UI.ImageBox();
+            this.bubbleImage = new Emgu.CV.UI.ImageBox();
+            this.orignalImage = new Emgu.CV.UI.ImageBox();
+            this.bubbleDetectBtn = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.sheetDetectImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bubbleImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.orignalImage)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // fileOpenButton
             // 
-            this.button1.Location = new System.Drawing.Point(36, 38);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "browse";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            this.fileOpenButton.Location = new System.Drawing.Point(36, 38);
+            this.fileOpenButton.Name = "fileOpenButton";
+            this.fileOpenButton.Size = new System.Drawing.Size(75, 23);
+            this.fileOpenButton.TabIndex = 0;
+            this.fileOpenButton.Text = "Open File";
+            this.fileOpenButton.UseVisualStyleBackColor = true;
+            this.fileOpenButton.Click += new System.EventHandler(this.Button1_Click);
             // 
             // label1
             // 
@@ -75,27 +64,6 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Student Information";
             // 
-            // imageBox1
-            // 
-            this.imageBox1.BackColor = System.Drawing.Color.White;
-            this.imageBox1.Location = new System.Drawing.Point(12, 139);
-            this.imageBox1.Name = "imageBox1";
-            this.imageBox1.Size = new System.Drawing.Size(180, 158);
-            this.imageBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox1.TabIndex = 2;
-            this.imageBox1.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.label2.Location = new System.Drawing.Point(532, 83);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(278, 19);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Display Answer Sheet in image Box";
-            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(801, 434);
@@ -106,99 +74,62 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
-            // button3
+            // sheetBtn
             // 
-            this.button3.Location = new System.Drawing.Point(148, 38);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(101, 23);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Convert to binary";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.Button3_Click);
+            this.sheetBtn.Location = new System.Drawing.Point(148, 38);
+            this.sheetBtn.Name = "sheetBtn";
+            this.sheetBtn.Size = new System.Drawing.Size(101, 23);
+            this.sheetBtn.TabIndex = 5;
+            this.sheetBtn.Text = "Detect Mcq Sheet";
+            this.sheetBtn.UseVisualStyleBackColor = true;
+            this.sheetBtn.Click += new System.EventHandler(this.Button3_Click);
             // 
-            // imageBox2
+            // detectMcqBtn
             // 
-            this.imageBox2.BackColor = System.Drawing.Color.White;
-            this.imageBox2.Location = new System.Drawing.Point(198, 139);
-            this.imageBox2.Name = "imageBox2";
-            this.imageBox2.Size = new System.Drawing.Size(162, 158);
-            this.imageBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox2.TabIndex = 2;
-            this.imageBox2.TabStop = false;
+            this.detectMcqBtn.Location = new System.Drawing.Point(293, 38);
+            this.detectMcqBtn.Name = "detectMcqBtn";
+            this.detectMcqBtn.Size = new System.Drawing.Size(122, 23);
+            this.detectMcqBtn.TabIndex = 6;
+            this.detectMcqBtn.Text = "Dectect MCQS";
+            this.detectMcqBtn.UseVisualStyleBackColor = true;
+            this.detectMcqBtn.Click += new System.EventHandler(this.Button4_Click);
             // 
-            // button4
+            // sheetDetectImage
             // 
-            this.button4.Location = new System.Drawing.Point(293, 38);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(122, 23);
-            this.button4.TabIndex = 6;
-            this.button4.Text = "Addaptive Threshhold";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.Button4_Click);
+            this.sheetDetectImage.Location = new System.Drawing.Point(330, 139);
+            this.sheetDetectImage.Name = "sheetDetectImage";
+            this.sheetDetectImage.Size = new System.Drawing.Size(217, 262);
+            this.sheetDetectImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.sheetDetectImage.TabIndex = 2;
+            this.sheetDetectImage.TabStop = false;
             // 
-            // contourBtn
+            // bubbleImage
             // 
-            this.contourBtn.Location = new System.Drawing.Point(461, 38);
-            this.contourBtn.Name = "contourBtn";
-            this.contourBtn.Size = new System.Drawing.Size(75, 23);
-            this.contourBtn.TabIndex = 7;
-            this.contourBtn.Text = "Find Contour";
-            this.contourBtn.UseVisualStyleBackColor = true;
-            this.contourBtn.Click += new System.EventHandler(this.ContourBtn_Click);
+            this.bubbleImage.Location = new System.Drawing.Point(612, 139);
+            this.bubbleImage.Name = "bubbleImage";
+            this.bubbleImage.Size = new System.Drawing.Size(252, 262);
+            this.bubbleImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.bubbleImage.TabIndex = 2;
+            this.bubbleImage.TabStop = false;
             // 
-            // imageBox3
+            // orignalImage
             // 
-            this.imageBox3.Location = new System.Drawing.Point(366, 139);
-            this.imageBox3.Name = "imageBox3";
-            this.imageBox3.Size = new System.Drawing.Size(161, 158);
-            this.imageBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox3.TabIndex = 2;
-            this.imageBox3.TabStop = false;
+            this.orignalImage.Location = new System.Drawing.Point(36, 139);
+            this.orignalImage.Name = "orignalImage";
+            this.orignalImage.Size = new System.Drawing.Size(213, 262);
+            this.orignalImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.orignalImage.TabIndex = 2;
+            this.orignalImage.TabStop = false;
             // 
-            // imageBox4
+            // bubbleDetectBtn
             // 
-            this.imageBox4.Location = new System.Drawing.Point(535, 139);
-            this.imageBox4.Name = "imageBox4";
-            this.imageBox4.Size = new System.Drawing.Size(161, 158);
-            this.imageBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox4.TabIndex = 2;
-            this.imageBox4.TabStop = false;
-            // 
-            // imageBox5
-            // 
-            this.imageBox5.Location = new System.Drawing.Point(703, 139);
-            this.imageBox5.Name = "imageBox5";
-            this.imageBox5.Size = new System.Drawing.Size(173, 158);
-            this.imageBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox5.TabIndex = 2;
-            this.imageBox5.TabStop = false;
-            // 
-            // imageBox6
-            // 
-            this.imageBox6.Location = new System.Drawing.Point(13, 304);
-            this.imageBox6.Name = "imageBox6";
-            this.imageBox6.Size = new System.Drawing.Size(179, 153);
-            this.imageBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox6.TabIndex = 2;
-            this.imageBox6.TabStop = false;
-            // 
-            // imageBox7
-            // 
-            this.imageBox7.Location = new System.Drawing.Point(198, 304);
-            this.imageBox7.Name = "imageBox7";
-            this.imageBox7.Size = new System.Drawing.Size(162, 153);
-            this.imageBox7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox7.TabIndex = 2;
-            this.imageBox7.TabStop = false;
-            // 
-            // imageBox8
-            // 
-            this.imageBox8.Location = new System.Drawing.Point(366, 304);
-            this.imageBox8.Name = "imageBox8";
-            this.imageBox8.Size = new System.Drawing.Size(161, 153);
-            this.imageBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imageBox8.TabIndex = 2;
-            this.imageBox8.TabStop = false;
+            this.bubbleDetectBtn.Location = new System.Drawing.Point(470, 38);
+            this.bubbleDetectBtn.Name = "bubbleDetectBtn";
+            this.bubbleDetectBtn.Size = new System.Drawing.Size(91, 23);
+            this.bubbleDetectBtn.TabIndex = 7;
+            this.bubbleDetectBtn.Text = "Find Bubbles";
+            this.bubbleDetectBtn.UseVisualStyleBackColor = true;
+            this.bubbleDetectBtn.Click += new System.EventHandler(this.BubbleDetectBtn_Click);
             // 
             // Form1
             // 
@@ -206,32 +137,22 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(28)))), ((int)(((byte)(38)))));
             this.ClientSize = new System.Drawing.Size(888, 480);
-            this.Controls.Add(this.imageBox8);
-            this.Controls.Add(this.imageBox7);
-            this.Controls.Add(this.imageBox6);
-            this.Controls.Add(this.imageBox5);
-            this.Controls.Add(this.imageBox4);
-            this.Controls.Add(this.imageBox3);
-            this.Controls.Add(this.contourBtn);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.imageBox2);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.bubbleDetectBtn);
+            this.Controls.Add(this.orignalImage);
+            this.Controls.Add(this.bubbleImage);
+            this.Controls.Add(this.sheetDetectImage);
+            this.Controls.Add(this.detectMcqBtn);
+            this.Controls.Add(this.sheetBtn);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.imageBox1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.fileOpenButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.Name = "Form1";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sheetDetectImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bubbleImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.orignalImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -239,21 +160,15 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button fileOpenButton;
         private System.Windows.Forms.Label label1;
-        private Emgu.CV.UI.ImageBox imageBox1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private Emgu.CV.UI.ImageBox imageBox2;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button contourBtn;
-        private Emgu.CV.UI.ImageBox imageBox3;
-        private Emgu.CV.UI.ImageBox imageBox4;
-        private Emgu.CV.UI.ImageBox imageBox5;
-        private Emgu.CV.UI.ImageBox imageBox6;
-        private Emgu.CV.UI.ImageBox imageBox7;
-        private Emgu.CV.UI.ImageBox imageBox8;
+        private System.Windows.Forms.Button sheetBtn;
+        private System.Windows.Forms.Button detectMcqBtn;
+        private Emgu.CV.UI.ImageBox sheetDetectImage;
+        private Emgu.CV.UI.ImageBox bubbleImage;
+        private Emgu.CV.UI.ImageBox orignalImage;
+        private System.Windows.Forms.Button bubbleDetectBtn;
     }
 }
 

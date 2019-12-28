@@ -1,0 +1,13 @@
+https://github.com/Udayraj123/OMRChecker/wiki/Rich-Visuals
+https://www.pyimagesearch.com/2016/10/03/bubble-sheet-multiple-choice-scanner-and-test-grader-using-omr-python-and-opencv/
+https://blog.ayoungprogrammer.com/2013/03/tutorial-creating-multiple-choice.html/
+https://qtandopencv.blogspot.com/2013/10/perspective-correction-for.html
+ilb(static libraries) they are inside the application so that user is unable to deletee them but it makes program size much larger.
+https://robofest.net/index.php/tech-resources
+
+OpenCV 3 
+EmguCv Essentials
+
+From Youtube Videos
+
+EmguCV tutorial series by Akhtar jameels
